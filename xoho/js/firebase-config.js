@@ -8,12 +8,12 @@ import { getAuth }       from 'https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getStorage }    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
 
 const firebaseConfig = {
-  apiKey:            "VOTRE_API_KEY",
-  authDomain:        "votre-projet.firebaseapp.com",
-  projectId:         "votre-projet",
-  storageBucket:     "votre-projet.appspot.com",
-  messagingSenderId: "VOTRE_SENDER_ID",
-  appId:             "VOTRE_APP_ID"
+  apiKey:            "AIzaSyB-BaqpzVfTpDATkI1CxwDxQrQkN-LmoaA",
+  authDomain:        "xoho-23.firebaseapp.com",
+  projectId:         "xoho-23",
+  storageBucket:     "xoho-23.firebasestorage.app",
+  messagingSenderId: "480577900528",
+  appId:             "1:480577900528:web:5086c2bfd28b7ccc42d735"
 };
 
 const app     = initializeApp(firebaseConfig);
