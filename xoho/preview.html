@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xoho – Aperçu App</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --orange: #F47920;
+    --orange-dark: #D4640F;
+    --orange-light: #FF9446;
+    --orange-glow: rgba(244,121,32,0.2);
+    --bg-deep: #0A0A12;
+    --bg-base: #0E0E1A;
+    --bg-surface: #141422;
+    --bg-card: #1A1A2C;
+    --bg-elevated: #1F1F35;
+    --glass: rgba(255,255,255,0.06);
+    --glass-border: rgba(255,255,255,0.1);
+    --text-primary: #F2F2F7;
+    --text-secondary: #8E8EA0;
+    --text-tertiary: #5A5A72;
+    --success: #22C55E;
+    --warning: #EAB308;
+    --info: #3B82F6;
+    --error: #EF4444;
+    --border: #252540;
+    --divider: #1E1E30;
+    --star: #FBB024;
+    --mtn: #FFCC00;
+    --moov: #003DA5;
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #07070F;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    color: var(--text-primary);
+  }
+
+  h1.page-title {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .xoho-logo-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .logo-circle {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #F47920, #FF6B00);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 900; color: white;
+    box-shadow: 0 0 20px rgba(244,121,32,0.5);
+  }
+
+  .logo-text {
+    font-size: 24px; font-weight: 800;
+    color: var(--orange);
+    letter-spacing: -0.5px;
+  }
+
+  /* Screen navigation tabs */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 32px;
+    max-width: 800px;
+  }
+
+  .tab {
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .tab:hover { border-color: var(--orange); color: var(--orange); }
+  .tab.active {
+    background: rgba(244,121,32,0.12);
+    border-color: var(--orange);
+    color: var(--orange);
+  }
+
+  /* Phone frame */
+  .phone-wrap {
+    position: relative;
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .phone-frame {
+    width: 375px;
+    height: 812px;
+    border-radius: 50px;
+    background: #0A0A12;
+    border: 2px solid #2A2A40;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 6px #0D0D14,
+      0 0 0 8px #1A1A2C,
+      0 40px 80px rgba(0,0,0,0.8),
+      0 0 60px rgba(244,121,32,0.08);
+  }
+
+  /* Notch */
+  .phone-frame::before {
+    content: '';
+    position: absolute;
+    top: 12px; left: 50%;
+    transform: translateX(-50%);
+    width: 120px; height: 30px;
+    background: #0A0A12;
+    border-radius: 20px;
+    z-index: 100;
+    box-shadow: 0 0 0 2px #2A2A40;
+  }
+
+  .screen {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    position: relative;
+    display: none;
+  }
+
+  .screen.active { display: block; }
+
+  /* ── SHARED COMPONENTS ── */
+  .glow-bg {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+  }
+
+  .bg-gradient {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, #0A0A12 0%, #0E0E1A 50%, #141422 100%);
+  }
+
+  .glass-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    backdrop-filter: blur(20px);
+  }
+
+  .glass-orange {
+    background: rgba(244,121,32,0.08);
+    border: 1px solid rgba(244,121,32,0.2);
+    border-radius: 18px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #F47920, #FF6B00);
+    border: none; border-radius: 14px;
+    color: white; font-family: 'Nunito', sans-serif;
+    font-weight: 700; font-size: 15px;
+    padding: 0 20px;
+    box-shadow: 0 6px 20px rgba(244,121,32,0.35);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--text-secondary);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600; font-size: 14px;
+    padding: 0 20px; cursor: pointer;
+  }
+
+  .status-bar {
+    height: 54px; display: flex;
+    align-items: flex-end; padding: 0 24px 8px;
+    position: relative; z-index: 10;
+    font-size: 11px; font-weight: 600;
+    justify-content: space-between;
+    color: var(--text-primary);
+  }
+
+  .bottom-nav {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 80px;
+    background: rgba(26,26,44,0.95);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    display: flex; align-items: center;
+    justify-content: space-around;
+    padding-bottom: 10px;
+  }
+
+  .nav-item {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 3px;
+    cursor: pointer;
+  }
+
+  .nav-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  .nav-icon.active { background: rgba(244,121,32,0.15); }
+
+  .nav-label {
+    font-size: 9px; font-weight: 600;
+  }
+
+  /* ── SCREEN 1: SPLASH ── */
+  #s-splash {
+    background: radial-gradient(ellipse at 70% 20%, rgba(244,121,32,0.15) 0%, transparent 60%),
+                linear-gradient(180deg, #0A0A12, #0E0E1A);
+  }
+
+  .splash-content {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    height: 100%; gap: 16px;
+  }
+
+  .splash-logo {
+    width: 100px; height: 100px; border-radius: 50%;
+    background: linear-gradient(135deg, #F47920, #FF6B00);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 52px; font-weight: 900; color: white;
+    box-shadow: 0 0 60px rgba(244,121,32,0.5), 0 0 120px rgba(244,121,32,0.2);
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 40px rgba(244,121,32,0.4), 0 0 80px rgba(244,121,32,0.15); }
+    50% { box-shadow: 0 0 70px rgba(244,121,32,0.7), 0 0 140px rgba(244,121,32,0.3); }
+  }
+
+  .splash-tagline {
+    font-size: 13px; color: var(--text-secondary);
+    text-align: center; max-width: 220px; line-height: 1.6;
+  }
+
+  .splash-loader {
+    width: 32px; height: 32px;
+    border: 2px solid rgba(244,121,32,0.2);
+    border-top-color: var(--orange);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-top: 40px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── SCREEN 2: ONBOARDING ── */
+  #s-onboarding { overflow: hidden; }
+
+  .ob-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, #0A0A12, #0E0E1A);
+  }
+
+  .ob-skip {
+    position: absolute; top: 60px; right: 20px;
+    font-size: 13px; font-weight: 600;
+    color: var(--text-secondary); z-index: 10; cursor: pointer;
+  }
+
+  .ob-content {
+    position: absolute; top: 120px; left: 0; right: 0;
+    display: flex; flex-direction: column;
+    align-items: center; padding: 0 36px; gap: 20px;
+  }
+
+  .ob-icon-wrap {
+    width: 120px; height: 120px; border-radius: 50%;
+    background: rgba(244,121,32,0.1);
+    border: 1.5px solid rgba(244,121,32,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 52px;
+  }
+
+  .ob-title {
+    font-size: 24px; font-weight: 700; text-align: center;
+    line-height: 1.25; letter-spacing: -0.3px;
+  }
+
+  .ob-sub {
+    font-size: 14px; color: var(--text-secondary);
+    text-align: center; line-height: 1.65;
+  }
+
+  .ob-bottom {
+    position: absolute; bottom: 36px; left: 24px; right: 24px;
+  }
+
+  .ob-dots {
+    display: flex; justify-content: center;
+    gap: 6px; margin-bottom: 24px;
+  }
+
+  .dot {
+    height: 8px; border-radius: 4px; background: var(--text-tertiary);
+    transition: all 0.3s;
+  }
+
+  .dot.active { width: 24px; background: var(--orange); }
+  .dot:not(.active) { width: 8px; }
+
+  /* ── SCREEN 3: LOGIN ── */
+  #s-login {
+    background: radial-gradient(ellipse at 70% 10%, rgba(244,121,32,0.12) 0%, transparent 55%),
+                linear-gradient(180deg, #0A0A12, #0E0E1A);
+  }
+
+  .login-content { padding: 60px 24px 0; }
+
+  .login-logo-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 40px;
+  }
+
+  .mini-logo {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, #F47920, #FF6B00);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 900; color: white;
+    box-shadow: 0 0 20px rgba(244,121,32,0.4);
+  }
+
+  .login-title { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+
+  .login-sub {
+    font-size: 13px; color: var(--text-secondary);
+    line-height: 1.6; margin-bottom: 32px;
+  }
+
+  .phone-input-row {
+    display: flex; gap: 10px; margin-bottom: 20px;
+  }
+
+  .country-chip {
+    display: flex; align-items: center; gap: 6px;
+    padding: 0 14px; height: 56px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border); border-radius: 14px;
+    font-size: 14px; font-weight: 600;
+  }
+
+  .phone-field {
+    flex: 1; height: 56px; border-radius: 14px;
+    background: var(--bg-card); border: 1.5px solid var(--orange);
+    color: var(--text-primary); font-family: 'Nunito', sans-serif;
+    font-size: 16px; font-weight: 600;
+    padding: 0 16px; outline: none;
+    display: flex; align-items: center;
+  }
+
+  .otp-row {
+    display: flex; gap: 8px; justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .otp-box {
+    width: 46px; height: 54px; border-radius: 12px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 700;
+  }
+
+  .otp-box.filled { border-color: var(--orange); color: var(--orange); }
+  .otp-box.active { border-color: var(--orange); border-width: 2px; }
+
+  /* ── SCREEN 4: HOME ── */
+  #s-home { overflow: hidden; }
+
+  .map-bg {
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(0deg, rgba(37,37,64,0.4) 0px, transparent 1px, transparent 40px),
+      repeating-linear-gradient(90deg, rgba(37,37,64,0.4) 0px, transparent 1px, transparent 40px),
+      linear-gradient(180deg, #0D0D14 0%, #12121E 50%, #0D0D14 100%);
+  }
+
+  .map-roads {
+    position: absolute; inset: 0; overflow: hidden;
+  }
+
+  .road-h {
+    position: absolute; left: 0; right: 0;
+    height: 2px; background: rgba(50,50,80,0.8);
+  }
+
+  .road-v {
+    position: absolute; top: 0; bottom: 0;
+    width: 2px; background: rgba(50,50,80,0.8);
+  }
+
+  .road-h.main { height: 4px; background: rgba(70,70,110,0.9); }
+  .road-v.main { width: 4px; background: rgba(70,70,110,0.9); }
+
+  .driver-marker {
+    position: absolute;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    animation: float 3s ease-in-out infinite;
+    cursor: pointer;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  .dm-available {
+    background: var(--orange);
+    border: 2px solid rgba(255,255,255,0.3);
+  }
+
+  .dm-busy {
+    background: var(--warning);
+    border: 2px solid rgba(255,255,255,0.2);
+  }
+
+  .home-top {
+    position: absolute; top: 0; left: 0; right: 0;
+    background: linear-gradient(180deg, rgba(10,10,18,0.95) 60%, transparent);
+    padding: 54px 20px 20px;
+  }
+
+  .home-header {
+    display: flex; align-items: center;
+    gap: 10px; margin-bottom: 14px;
+  }
+
+  .wallet-chip {
+    margin-left: auto;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 7px 12px;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 700; color: var(--orange);
+    backdrop-filter: blur(12px);
+  }
+
+  .avatar-circle {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, #F47920, #FF6B00);
+    border: 2px solid rgba(244,121,32,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: white;
+  }
+
+  .search-bar {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 13px 16px;
+    display: flex; align-items: center; gap: 12px;
+    backdrop-filter: blur(20px);
+  }
+
+  .search-cta {
+    margin-left: auto;
+    background: var(--orange);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 11px; font-weight: 700; color: white;
+  }
+
+  .active-banner {
+    position: absolute; left: 16px; right: 16px;
+    bottom: 96px;
+    background: rgba(244,121,32,0.1);
+    border: 1px solid rgba(244,121,32,0.25);
+    border-radius: 16px;
+    padding: 13px 16px;
+    display: flex; align-items: center; gap: 12px;
+    backdrop-filter: blur(20px);
+  }
+
+  .banner-icon {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(244,121,32,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  /* ── SCREEN 5: DRIVER SHEET ── */
+  #s-driver { overflow: hidden; }
+
+  .driver-map-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, #0D0D14, #12121E);
+    opacity: 0.7;
+  }
+
+  .driver-sheet {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: var(--bg-card);
+    border-radius: 28px 28px 0 0;
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    padding: 12px 24px 40px;
+  }
+
+  .sheet-handle {
+    width: 40px; height: 4px; background: var(--text-tertiary);
+    border-radius: 2px; margin: 0 auto 20px;
+  }
+
+  .driver-header {
+    display: flex; align-items: center; gap: 16px; margin-bottom: 20px;
+  }
+
+  .driver-avatar {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(135deg, #F47920, #FF6B00);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 700; color: white;
+    position: relative;
+  }
+
+  .online-dot {
+    position: absolute; bottom: 2px; right: 2px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--success);
+    border: 2px solid var(--bg-card);
+  }
+
+  .star-row {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 13px; color: var(--text-secondary);
+  }
+
+  .vehicle-chip {
+    display: inline-flex; align-items: center;
+    padding: 3px 8px; border-radius: 6px;
+    background: var(--bg-elevated);
+    font-size: 10px; font-weight: 600;
+    color: var(--success); margin-top: 4px;
+  }
+
+  .stats-row {
+    display: flex; gap: 0;
+    border-top: 1px solid var(--divider);
+    border-bottom: 1px solid var(--divider);
+    padding: 14px 0; margin-bottom: 16px;
+  }
+
+  .stat-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    border-right: 1px solid var(--divider);
+  }
+
+  .stat-item:last-child { border-right: none; }
+
+  .stat-val { font-size: 15px; font-weight: 700; }
+  .stat-lbl { font-size: 10px; color: var(--text-tertiary); font-weight: 600; }
+
+  .unlock-card {
+    background: rgba(244,121,32,0.08);
+    border: 1px solid rgba(244,121,32,0.2);
+    border-radius: 14px;
+    padding: 14px; display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .lock-icon-wrap {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(244,121,32,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+
+  /* ── SCREEN 6: CREATE SHIPMENT ── */
+  #s-create { background: linear-gradient(180deg, #0A0A12, #0E0E1A); }
+
+  .step-bar {
+    display: flex; gap: 4px; margin: 20px 24px;
+  }
+
+  .step-seg {
+    flex: 1; height: 4px; border-radius: 2px;
+    background: var(--border); transition: background 0.3s;
+  }
+
+  .step-seg.done { background: var(--orange); }
+
+  .step-labels {
+    display: flex; gap: 4px;
+    padding: 0 24px; margin-bottom: 24px;
+  }
+
+  .step-lbl {
+    flex: 1; font-size: 10px; font-weight: 600;
+    text-align: center; color: var(--text-tertiary);
+  }
+
+  .step-lbl.active { color: var(--orange); }
+
+  .create-content { padding: 0 24px; }
+
+  .route-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .route-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 0;
+  }
+
+  .dot-circle {
+    width: 12px; height: 12px; border-radius: 50%;
+  }
+
+  .route-divider {
+    height: 1px; background: var(--divider);
+    margin: 0 0 0 24px;
+  }
+
+  .route-input {
+    flex: 1; background: none; border: none; outline: none;
+    color: var(--text-primary); font-family: 'Nunito', sans-serif;
+    font-size: 14px; font-weight: 500;
+  }
+
+  .city-tags {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 16px;
+  }
+
+  .city-tag {
+    padding: 6px 12px; border-radius: 8px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    font-size: 11px; font-weight: 600; color: var(--text-secondary);
+    cursor: pointer;
+  }
+
+  .price-display {
+    text-align: center; margin: 20px 0 8px;
+  }
+
+  .price-big {
+    font-size: 36px; font-weight: 800;
+    color: var(--orange); letter-spacing: -1px;
+  }
+
+  .slider-track {
+    width: 100%; height: 4px; border-radius: 2px;
+    background: linear-gradient(90deg, var(--orange) 60%, var(--border) 60%);
+    margin-bottom: 20px; position: relative;
+  }
+
+  .slider-thumb {
+    position: absolute; width: 18px; height: 18px;
+    border-radius: 50%; background: var(--orange);
+    top: 50%; left: 60%; transform: translate(-50%, -50%);
+    box-shadow: 0 0 12px rgba(244,121,32,0.5);
+  }
+
+  .insurance-option {
+    border-radius: 12px; padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 8px; border: 1px solid;
+    transition: all 0.2s;
+  }
+
+  .ins-none { background: var(--bg-card); border-color: var(--border); }
+  .ins-basic { background: rgba(34,197,94,0.06); border-color: rgba(34,197,94,0.3); }
+  .ins-premium { background: rgba(244,121,32,0.08); border-color: rgba(244,121,32,0.3); }
+
+  /* ── SCREEN 7: TRACKING ── */
+  #s-tracking { overflow: hidden; }
+
+  .track-map {
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(0deg, rgba(37,37,64,0.3) 0px, transparent 1px, transparent 40px),
+      repeating-linear-gradient(90deg, rgba(37,37,64,0.3) 0px, transparent 1px, transparent 40px),
+      linear-gradient(180deg, #0D0D14, #12121E);
+  }
+
+  .track-route-line {
+    position: absolute;
+    top: 180px; left: 80px;
+    width: 215px; height: 2px;
+    background: repeating-linear-gradient(90deg, var(--orange) 0, var(--orange) 12px, transparent 12px, transparent 20px);
+    transform: rotate(-15deg);
+    transform-origin: left center;
+  }
+
+  .pickup-pin {
+    position: absolute; top: 155px; left: 65px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--info);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 0 12px rgba(59,130,246,0.5);
+  }
+
+  .delivery-pin {
+    position: absolute; top: 175px; right: 65px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--success);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 0 12px rgba(34,197,94,0.5);
+  }
+
+  .truck-icon {
+    position: absolute; top: 163px; left: 180px;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 0 20px rgba(244,121,32,0.6);
+    animation: float 2s ease-in-out infinite;
+  }
+
+  .track-top {
+    position: absolute; top: 0; left: 0; right: 0;
+    padding: 54px 8px 0;
+    background: linear-gradient(180deg, rgba(10,10,18,0.95) 70%, transparent);
+  }
+
+  .track-panel {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: var(--bg-card);
+    border-radius: 28px 28px 0 0;
+    border-top: 1px solid var(--border);
+    padding: 20px 24px 32px;
+  }
+
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 8px;
+    font-size: 11px; font-weight: 600;
+  }
+
+  .badge-transit {
+    background: rgba(244,121,32,0.12);
+    border: 1px solid rgba(244,121,32,0.3);
+    color: var(--orange);
+  }
+
+  .timeline {
+    display: flex; flex-direction: column; gap: 0;
+    margin: 16px 0;
+  }
+
+  .tl-item {
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+
+  .tl-left {
+    display: flex; flex-direction: column; align-items: center;
+  }
+
+  .tl-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; flex-shrink: 0;
+  }
+
+  .tl-done { background: var(--success); }
+  .tl-active { background: var(--orange); }
+  .tl-todo { background: var(--bg-elevated); }
+
+  .tl-line {
+    width: 2px; height: 22px;
+    background: var(--divider); margin: 0 auto;
+  }
+
+  .tl-line.done { background: var(--success); }
+
+  .tl-text { padding-top: 6px; }
+  .tl-label { font-size: 12px; font-weight: 500; }
+  .tl-active-text { color: var(--orange); font-weight: 700; }
+  .tl-done-text { color: var(--text-secondary); }
+  .tl-todo-text { color: var(--text-tertiary); }
+
+  /* ── SCREEN 8: WALLET ── */
+  #s-wallet { background: linear-gradient(180deg, #0A0A12, #0E0E1A); overflow-y: auto; }
+
+  .balance-card {
+    margin: 20px 24px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #F47920, #FF6B00);
+    padding: 28px;
+    box-shadow: 0 12px 40px rgba(244,121,32,0.4);
+  }
+
+  .balance-label {
+    font-size: 12px; color: rgba(255,255,255,0.7);
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .balance-amount {
+    font-size: 36px; font-weight: 800; color: white;
+    letter-spacing: -1px; margin-bottom: 20px;
+  }
+
+  .wallet-actions {
+    display: flex; gap: 8px;
+  }
+
+  .w-action {
+    flex: 1; background: rgba(255,255,255,0.2);
+    border-radius: 12px; padding: 10px 6px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    cursor: pointer;
+  }
+
+  .w-action-label { font-size: 10px; font-weight: 600; color: white; }
+
+  .pay-methods {
+    display: flex; gap: 10px; padding: 0 24px; margin-bottom: 20px;
+  }
+
+  .pay-card {
+    flex: 1; background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .pay-logo {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; font-weight: 800;
+  }
+
+  .section-title {
+    font-size: 14px; font-weight: 700; padding: 0 24px;
+    margin-bottom: 10px;
+  }
+
+  .txn-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 16px; margin: 0 24px 8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+  }
+
+  .txn-icon {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+
+  .txn-credit { background: rgba(34,197,94,0.15); }
+  .txn-debit { background: rgba(239,68,68,0.15); }
+
+  .txn-info { flex: 1; }
+  .txn-name { font-size: 12px; font-weight: 600; }
+  .txn-date { font-size: 10px; color: var(--text-tertiary); }
+  .txn-amount { font-size: 13px; font-weight: 700; }
+
+  /* ── SCREEN 9: QR ── */
+  #s-qr { background: linear-gradient(180deg, #0A0A12, #0E0E1A); }
+
+  .qr-wrap {
+    display: flex; justify-content: center;
+    margin: 24px 24px 20px;
+  }
+
+  .qr-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    padding: 24px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 16px;
+    animation: qr-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes qr-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(244,121,32,0); }
+    50% { transform: scale(1.02); box-shadow: 0 0 30px rgba(244,121,32,0.15); }
+  }
+
+  .qr-svg {
+    width: 180px; height: 180px;
+    background: white; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 10px;
+  }
+
+  .qr-grid {
+    width: 100%; height: 100%;
+    display: grid; grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr); gap: 1px;
+  }
+
+  .qr-cell {
+    border-radius: 1px;
+    background: #0A0A12;
+  }
+
+  .qr-cell.w { background: white; }
+
+  .qr-id-chip {
+    background: rgba(244,121,32,0.1);
+    border: 1px solid rgba(244,121,32,0.3);
+    border-radius: 10px; padding: 6px 14px;
+    font-size: 12px; font-weight: 700; color: var(--orange);
+  }
+
+  .qr-instructions {
+    margin: 0 24px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px; padding: 14px;
+  }
+
+  .qr-step {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--divider);
+  }
+
+  .qr-step:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .qr-step-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(244,121,32,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+
+  /* ── SCREEN 10: PROFILE ── */
+  #s-profile { background: linear-gradient(180deg, #0A0A12, #0E0E1A); overflow-y: auto; }
+
+  .profile-avatar-wrap {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 20px 24px;
+  }
+
+  .profile-avatar {
+    width: 88px; height: 88px; border-radius: 50%;
+    background: linear-gradient(135deg, #F47920, #FF6B00);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 34px; font-weight: 700; color: white;
+    box-shadow: 0 0 30px rgba(244,121,32,0.35);
+    position: relative; margin-bottom: 14px;
+  }
+
+  .cam-badge {
+    position: absolute; bottom: 0; right: 0;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+
+  .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .profile-phone { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+
+  .kyc-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 8px;
+    font-size: 11px; font-weight: 600;
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.3);
+    color: var(--success);
+  }
+
+  .profile-stats {
+    display: flex; gap: 10px; padding: 0 24px; margin-bottom: 20px;
+  }
+
+  .p-stat {
+    flex: 1; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px; padding: 14px;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+
+  .p-stat-val { font-size: 16px; font-weight: 700; color: var(--orange); }
+  .p-stat-lbl { font-size: 10px; color: var(--text-tertiary); font-weight: 600; }
+
+  .menu-list { padding: 0 24px; }
+
+  .menu-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px; margin-bottom: 8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px; cursor: pointer;
+  }
+
+  .menu-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: rgba(244,121,32,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+  }
+
+  .menu-label { flex: 1; font-size: 13px; font-weight: 600; }
+  .menu-chevron { font-size: 14px; color: var(--text-tertiary); }
+
+  .menu-badge {
+    background: rgba(234,179,8,0.15);
+    border-radius: 6px; padding: 2px 8px;
+    font-size: 10px; font-weight: 600; color: var(--warning);
+  }
+
+  /* ── SCREEN DRIVER HOME ── */
+  #s-driver-home { background: linear-gradient(180deg, #0A0A12, #0E0E1A); overflow-y: auto; }
+
+  .dh-header { padding: 54px 24px 16px; }
+
+  .online-toggle {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: 12px;
+    font-size: 11px; font-weight: 600;
+  }
+
+  .toggle-on {
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.4);
+    color: var(--success);
+  }
+
+  .toggle-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .dh-stats { display: flex; gap: 8px; padding: 0 24px; margin-bottom: 16px; }
+
+  .dh-stat {
+    flex: 1; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px; padding: 12px;
+  }
+
+  .dh-stat-icon { font-size: 16px; margin-bottom: 4px; }
+  .dh-stat-val { font-size: 14px; font-weight: 700; }
+  .dh-stat-lbl { font-size: 10px; color: var(--text-tertiary); font-weight: 600; }
+
+  .dh-btns { display: flex; gap: 8px; padding: 0 24px; margin-bottom: 20px; }
+
+  .shipment-card {
+    margin: 0 24px 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px; padding: 14px;
+  }
+
+  .sc-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+
+  .sc-icon {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(244,121,32,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+
+  .sc-info { flex: 1; }
+  .sc-name { font-size: 13px; font-weight: 600; }
+  .sc-route { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+  .sc-price { font-size: 15px; font-weight: 700; color: var(--orange); }
+  .sc-dist { font-size: 10px; color: var(--text-secondary); text-align: right; }
+
+  .tag-row { display: flex; align-items: center; gap: 6px; }
+
+  .tag {
+    padding: 3px 8px; border-radius: 5px;
+    font-size: 10px; font-weight: 600;
+  }
+
+  .tag-assured { background: rgba(34,197,94,0.12); color: var(--success); }
+  .tag-interurban { background: rgba(59,130,246,0.12); color: var(--info); }
+
+  /* Sidebar info panel */
+  .info-panel {
+    width: 340px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+
+  .info-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 20px;
+  }
+
+  .info-card h3 {
+    font-size: 14px; font-weight: 700; color: var(--orange);
+    margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  }
+
+  .info-card p {
+    font-size: 12px; color: var(--text-secondary);
+    line-height: 1.6; margin-bottom: 8px;
+  }
+
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .info-card code {
+    font-size: 11px; background: var(--bg-elevated);
+    padding: 2px 6px; border-radius: 4px;
+    color: var(--orange);
+  }
+
+  .legend-dot {
+    display: inline-block; width: 10px; height: 10px;
+    border-radius: 50%; margin-right: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="xoho-logo-top">
+  <div class="logo-circle">X</div>
+  <div class="logo-text">xoho</div>
+</div>
+<p class="page-title" style="text-align:center">Aperçu interactif des écrans</p>
+<p style="font-size:12px;color:#5A5A72;text-align:center;margin-bottom:28px">Clique sur un écran pour l'afficher</p>
+
+<!-- Navigation tabs -->
+<div class="tabs">
+  <div class="tab active" onclick="showScreen('splash', this)">💫 Splash</div>
+  <div class="tab" onclick="showScreen('onboarding', this)">📱 Onboarding</div>
+  <div class="tab" onclick="showScreen('login', this)">🔐 Connexion OTP</div>
+  <div class="tab" onclick="showScreen('home', this)">🗺️ Accueil Carte</div>
+  <div class="tab" onclick="showScreen('driver', this)">👤 Fiche Livreur</div>
+  <div class="tab" onclick="showScreen('create', this)">📦 Créer un colis</div>
+  <div class="tab" onclick="showScreen('tracking', this)">📍 Tracking</div>
+  <div class="tab" onclick="showScreen('wallet', this)">💳 Portefeuille</div>
+  <div class="tab" onclick="showScreen('qr', this)">📷 QR Code</div>
+  <div class="tab" onclick="showScreen('profile', this)">🧑 Profil</div>
+  <div class="tab" onclick="showScreen('driver-home', this)">🏍️ Mode Livreur</div>
+</div>
+
+<div class="phone-wrap">
+
+  <!-- PHONE FRAME -->
+  <div class="phone-frame">
+
+    <!-- SPLASH -->
+    <div class="screen active" id="s-splash">
+      <div class="splash-content">
+        <div class="splash-logo">X</div>
+        <div style="font-size:40px;font-weight:800;color:#F47920;letter-spacing:-1px">xoho</div>
+        <div class="splash-tagline">Connecter les besoins<br>et les envois</div>
+        <div class="splash-loader"></div>
+      </div>
+    </div>
+
+    <!-- ONBOARDING -->
+    <div class="screen" id="s-onboarding">
+      <div class="ob-bg"></div>
+      <div style="position:absolute;top:-80px;right:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(244,121,32,0.12),transparent);"></div>
+      <span class="ob-skip">Passer</span>
+      <div class="ob-content">
+        <div class="ob-icon-wrap">📦</div>
+        <div class="ob-title">Envoyez vos colis<br>en toute confiance</div>
+        <div class="ob-sub">Publiez votre annonce et trouvez un livreur vérifié près de chez vous en quelques secondes.</div>
+      </div>
+      <div class="ob-bottom">
+        <div class="ob-dots">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+        <div class="btn-primary" style="height:56px;border-radius:16px;font-size:16px;cursor:pointer">
+          Suivant &nbsp;→
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="screen" id="s-login">
+      <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+      <div class="login-content">
+        <div class="login-logo-row">
+          <div class="mini-logo">X</div>
+          <span style="font-size:20px;font-weight:800;color:#F47920">xoho</span>
+        </div>
+        <div class="login-title">Connexion</div>
+        <div class="login-sub">Entrez votre numéro de téléphone pour recevoir un code de vérification.</div>
+
+        <div class="phone-input-row">
+          <div class="country-chip">🇧🇯 +229</div>
+          <div class="phone-field">01 23 45 67</div>
+        </div>
+
+        <div class="btn-primary" style="height:56px;border-radius:16px;font-size:15px;margin-bottom:28px">
+          Recevoir le code &nbsp;→
+        </div>
+
+        <div style="text-align:center;font-size:11px;color:#5A5A72">Vérification OTP</div>
+        <div style="text-align:center;font-size:11px;color:#8E8EA0;margin-bottom:20px">Code envoyé au +229 01 23 45 67</div>
+
+        <div class="otp-row">
+          <div class="otp-box filled">4</div>
+          <div class="otp-box filled">2</div>
+          <div class="otp-box filled">7</div>
+          <div class="otp-box active" style="border-width:2px;border-color:#F47920"></div>
+          <div class="otp-box"></div>
+          <div class="otp-box"></div>
+        </div>
+
+        <div class="btn-primary" style="height:56px;border-radius:16px;font-size:15px;margin-top:20px">
+          ✓ &nbsp;Confirmer
+        </div>
+      </div>
+    </div>
+
+    <!-- HOME -->
+    <div class="screen" id="s-home">
+      <!-- Map background -->
+      <div class="map-bg"></div>
+      <div class="map-roads">
+        <div class="road-h main" style="top:38%"></div>
+        <div class="road-h" style="top:52%"></div>
+        <div class="road-h" style="top:65%"></div>
+        <div class="road-v main" style="left:35%"></div>
+        <div class="road-v" style="left:60%"></div>
+        <div class="road-v" style="left:20%"></div>
+      </div>
+
+      <!-- Driver markers -->
+      <div class="driver-marker dm-available" style="top:42%;left:25%;animation-delay:0s" title="Kofi M.">🏍️</div>
+      <div class="driver-marker dm-available" style="top:55%;left:55%;animation-delay:0.8s" title="Aïssa K.">🚗</div>
+      <div class="driver-marker dm-busy" style="top:48%;left:68%;animation-delay:1.5s" title="Sébastien H.">🏍️</div>
+      <div class="driver-marker dm-available" style="top:62%;left:18%;animation-delay:0.4s" title="Marie A.">🛺</div>
+
+      <!-- Top gradient + header -->
+      <div class="home-top">
+        <div class="home-header">
+          <div class="mini-logo" style="width:36px;height:36px;font-size:20px">X</div>
+          <span style="font-size:16px;font-weight:800;color:#F47920">xoho</span>
+          <div class="wallet-chip">💳 12 500 F</div>
+          <div class="avatar-circle">AK</div>
+        </div>
+        <div class="search-bar">
+          <span style="font-size:18px;color:#5A5A72">🔍</span>
+          <span style="font-size:14px;color:#8E8EA0">Où livrer votre colis ?</span>
+          <div class="search-cta">Envoyer</div>
+        </div>
+      </div>
+
+      <!-- Active delivery banner -->
+      <div class="active-banner">
+        <div class="banner-icon">🚚</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#F47920">En route</div>
+          <div style="font-size:11px;color:#8E8EA0">→ Marché Dantokpa, Cotonou</div>
+        </div>
+        <span style="margin-left:auto;color:#F47920">›</span>
+      </div>
+
+      <!-- Bottom nav -->
+      <div class="bottom-nav">
+        <div class="nav-item">
+          <div class="nav-icon active">🗺️</div>
+          <div class="nav-label" style="color:#F47920">Carte</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">➕</div>
+          <div class="nav-label" style="color:#5A5A72">Envoyer</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">🏍️</div>
+          <div class="nav-label" style="color:#5A5A72">Livrer</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">💳</div>
+          <div class="nav-label" style="color:#5A5A72">Wallet</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">👤</div>
+          <div class="nav-label" style="color:#5A5A72">Profil</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DRIVER BOTTOM SHEET -->
+    <div class="screen" id="s-driver">
+      <div class="driver-map-bg"></div>
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(37,37,64,0.3) 0px,transparent 1px,transparent 40px),repeating-linear-gradient(90deg,rgba(37,37,64,0.3) 0px,transparent 1px,transparent 40px),linear-gradient(180deg,#0D0D14,#12121E);"></div>
+
+      <div class="driver-marker dm-available" style="top:12%;left:42%;animation-delay:0s;z-index:5">🏍️</div>
+
+      <div class="driver-sheet">
+        <div class="sheet-handle"></div>
+
+        <div class="driver-header">
+          <div class="driver-avatar">
+            KM
+            <div class="online-dot"></div>
+          </div>
+          <div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+              <span style="font-size:16px;font-weight:700">Kofi Mensah</span>
+              <span style="font-size:16px;color:#22C55E">✓</span>
+            </div>
+            <div class="star-row">⭐ <strong>4.8</strong> <span>· 234 livraisons</span></div>
+            <div class="vehicle-chip">🏍️ Moto · Disponible</div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-item">
+            <div class="stat-val">234</div>
+            <div class="stat-lbl">Livraisons</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-val">&lt; 15min</div>
+            <div class="stat-lbl">Réponse</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-val">98%</div>
+            <div class="stat-lbl">Satisfaction</div>
+          </div>
+        </div>
+
+        <div class="unlock-card">
+          <div class="lock-icon-wrap">🔒</div>
+          <div>
+            <div style="font-size:13px;font-weight:700">Contact masqué</div>
+            <div style="font-size:11px;color:#8E8EA0">Débloquez pour seulement 100 F CFA</div>
+          </div>
+        </div>
+
+        <div class="btn-primary" style="height:52px;border-radius:14px;font-size:14px;margin-bottom:10px">
+          🔓 &nbsp;Débloquer le contact – 100 F
+        </div>
+        <div class="btn-ghost" style="height:44px;width:100%;text-align:center;line-height:44px;font-size:13px">
+          Voir le profil complet
+        </div>
+      </div>
+    </div>
+
+    <!-- CREATE SHIPMENT -->
+    <div class="screen" id="s-create">
+      <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:0 8px 0 8px">
+        <span style="font-size:22px;cursor:pointer">←</span>
+        <span style="font-size:16px;font-weight:700">Envoyer un colis</span>
+      </div>
+
+      <div class="step-bar">
+        <div class="step-seg done"></div>
+        <div class="step-seg done"></div>
+        <div class="step-seg"></div>
+      </div>
+      <div class="step-labels">
+        <div class="step-lbl active">Adresses</div>
+        <div class="step-lbl active">Colis</div>
+        <div class="step-lbl">Prix</div>
+      </div>
+
+      <div class="create-content">
+        <!-- Type selector -->
+        <div style="font-size:12px;font-weight:700;margin-bottom:10px;color:#8E8EA0;text-transform:uppercase;letter-spacing:.8px">Type de trajet</div>
+        <div style="display:flex;gap:8px;margin-bottom:20px">
+          <div style="flex:1;background:rgba(244,121,32,0.1);border:1.5px solid #F47920;border-radius:12px;padding:10px;text-align:center;cursor:pointer">
+            <div style="font-size:18px">🏙️</div>
+            <div style="font-size:11px;font-weight:700;color:#F47920;margin-top:4px">Urbain</div>
+          </div>
+          <div style="flex:1;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center;cursor:pointer">
+            <div style="font-size:18px">🛣️</div>
+            <div style="font-size:11px;font-weight:600;color:#5A5A72;margin-top:4px">Interurbain</div>
+          </div>
+        </div>
+
+        <!-- Route card -->
+        <div style="font-size:12px;font-weight:700;margin-bottom:10px;color:#8E8EA0;text-transform:uppercase;letter-spacing:.8px">Adresses</div>
+        <div class="route-card">
+          <div class="route-row">
+            <div class="dot-circle" style="background:#F47920"></div>
+            <input class="route-input" value="Cadjehoun, Cotonou" readonly>
+          </div>
+          <div class="route-divider"></div>
+          <div class="route-row">
+            <div class="dot-circle" style="background:#22C55E"></div>
+            <input class="route-input" placeholder="Destination..." style="color:#8E8EA0">
+          </div>
+        </div>
+
+        <div style="font-size:12px;font-weight:700;margin-bottom:10px;color:#8E8EA0;text-transform:uppercase;letter-spacing:.8px">Villes populaires</div>
+        <div class="city-tags">
+          <div class="city-tag">Cotonou</div>
+          <div class="city-tag">Parakou</div>
+          <div class="city-tag">Porto-Novo</div>
+          <div class="city-tag">Bohicon</div>
+          <div class="city-tag">Ouidah</div>
+          <div class="city-tag">Abomey</div>
+        </div>
+      </div>
+
+      <!-- Bottom CTA -->
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:16px 24px 32px;background:linear-gradient(180deg,transparent,#0A0A12)">
+        <div class="btn-primary" style="height:56px;border-radius:16px;font-size:15px">
+          Suivant &nbsp;→
+        </div>
+      </div>
+    </div>
+
+    <!-- TRACKING -->
+    <div class="screen" id="s-tracking">
+      <div class="track-map"></div>
+      <div class="track-route-line"></div>
+      <div class="pickup-pin">📦</div>
+      <div class="truck-icon">🚚</div>
+      <div class="delivery-pin">📍</div>
+
+      <!-- Top bar -->
+      <div class="track-top">
+        <div style="display:flex;align-items:center;gap:8px;padding:0 8px">
+          <span style="font-size:22px;cursor:pointer">←</span>
+          <span style="font-size:16px;font-weight:700">Suivi du colis</span>
+        </div>
+      </div>
+
+      <!-- Bottom panel -->
+      <div class="track-panel">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div class="status-badge badge-transit">🚚 En route</div>
+          <div style="background:rgba(244,121,32,0.08);border:1px solid rgba(244,121,32,0.2);border-radius:10px;padding:6px 12px;display:flex;align-items:center;gap:6px;cursor:pointer">
+            <span style="font-size:14px">📷</span>
+            <span style="font-size:12px;font-weight:700;color:#F47920">QR Code</span>
+          </div>
+        </div>
+
+        <!-- Route summary -->
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:12px;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="color:#F47920;font-size:12px">⬤</span>
+            <span style="font-size:12px;color:#F2F2F7">Cadjehoun, Cotonou</span>
+          </div>
+          <div style="height:12px;border-left:2px solid var(--divider);margin-left:5px"></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="color:#22C55E;font-size:12px">📍</span>
+            <span style="font-size:12px;color:#F2F2F7">Marché Dantokpa</span>
+          </div>
+          <div style="border-top:1px solid var(--divider);margin-top:10px;padding-top:8px;display:flex;justify-content:space-around">
+            <span style="font-size:11px;color:#8E8EA0">📏 3.5 km</span>
+            <span style="font-size:11px;color:#8E8EA0">⏱️ ~20 min</span>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-left"><div class="tl-dot tl-done">✓</div><div class="tl-line done"></div></div>
+            <div class="tl-text"><div class="tl-label tl-done-text">Annonce publiée</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-left"><div class="tl-dot tl-done">✓</div><div class="tl-line done"></div></div>
+            <div class="tl-text"><div class="tl-label tl-done-text">Livreur trouvé</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-left"><div class="tl-dot tl-active">📦</div><div class="tl-line"></div></div>
+            <div class="tl-text"><div class="tl-label tl-active-text">En route ← ici</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-left"><div class="tl-dot tl-todo">✓</div></div>
+            <div class="tl-text"><div class="tl-label tl-todo-text">Livré</div></div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
+          <div>
+            <div style="font-size:10px;color:#8E8EA0">Prix</div>
+            <div style="font-size:20px;font-weight:800;color:#F47920">800 F CFA</div>
+          </div>
+          <div style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:8px;padding:6px 10px;font-size:10px;font-weight:600;color:#22C55E">✅ Assuré Basic</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WALLET -->
+    <div class="screen" id="s-wallet">
+      <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:0 8px 0 8px;margin-bottom:0">
+        <span style="font-size:22px;cursor:pointer">←</span>
+        <span style="font-size:16px;font-weight:700">Portefeuille</span>
+      </div>
+
+      <!-- Balance card -->
+      <div class="balance-card">
+        <div class="balance-label">💳 Solde disponible</div>
+        <div class="balance-amount">12 500 F CFA</div>
+        <div class="wallet-actions">
+          <div class="w-action"><span style="font-size:18px">➕</span><div class="w-action-label">Recharger</div></div>
+          <div class="w-action"><span style="font-size:18px">📤</span><div class="w-action-label">Retirer</div></div>
+          <div class="w-action"><span style="font-size:18px">📋</span><div class="w-action-label">Historique</div></div>
+        </div>
+      </div>
+
+      <!-- Payment methods -->
+      <div style="font-size:13px;font-weight:700;padding:0 24px;margin-bottom:10px">Méthodes de paiement</div>
+      <div class="pay-methods">
+        <div class="pay-card">
+          <div class="pay-logo" style="background:#FFCC00"><span style="font-size:7px;font-weight:900">MTN</span></div>
+          <div>
+            <div style="font-size:12px;font-weight:700">MTN MoMo</div>
+            <div style="font-size:10px;color:#22C55E;font-weight:600">● Lié</div>
+          </div>
+        </div>
+        <div class="pay-card">
+          <div class="pay-logo" style="background:#003DA5"><span style="font-size:6px;font-weight:900;color:white">MOOV</span></div>
+          <div>
+            <div style="font-size:12px;font-weight:700">Moov Money</div>
+            <div style="font-size:10px;color:#5A5A72;font-weight:600">+ Ajouter</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transactions -->
+      <div class="section-title">Transactions récentes</div>
+
+      <div class="txn-item">
+        <div class="txn-icon txn-credit">⬇️</div>
+        <div class="txn-info">
+          <div class="txn-name">Livraison Cotonou → Bohicon</div>
+          <div class="txn-date">03/05/2026 à 14h30</div>
+        </div>
+        <div class="txn-amount" style="color:#22C55E">+3 200 F</div>
+      </div>
+
+      <div class="txn-item">
+        <div class="txn-icon txn-debit">⬆️</div>
+        <div class="txn-info">
+          <div class="txn-name">Déblocage contact livreur</div>
+          <div class="txn-date">03/05/2026 à 11h15</div>
+        </div>
+        <div class="txn-amount" style="color:#EF4444">-100 F</div>
+      </div>
+
+      <div class="txn-item">
+        <div class="txn-icon txn-credit">⬇️</div>
+        <div class="txn-info">
+          <div class="txn-name">Recharge MTN MoMo</div>
+          <div class="txn-date">01/05/2026 à 09h00</div>
+        </div>
+        <div class="txn-amount" style="color:#22C55E">+5 000 F</div>
+      </div>
+
+      <div class="txn-item">
+        <div class="txn-icon txn-debit">⬆️</div>
+        <div class="txn-info">
+          <div class="txn-name">Assurance Xoho Premium</div>
+          <div class="txn-date">30/04/2026 à 16h45</div>
+        </div>
+        <div class="txn-amount" style="color:#EF4444">-500 F</div>
+      </div>
+    </div>
+
+    <!-- QR CODE -->
+    <div class="screen" id="s-qr">
+      <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:0 8px;margin-bottom:16px">
+        <span style="font-size:22px;cursor:pointer">←</span>
+        <span style="font-size:16px;font-weight:700">QR Code du colis</span>
+      </div>
+
+      <div class="qr-wrap">
+        <div class="qr-card">
+          <!-- QR Code simulation -->
+          <div class="qr-svg">
+            <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+              <!-- QR pattern simulation -->
+              <rect width="160" height="160" fill="white"/>
+              <!-- Top-left eye -->
+              <rect x="10" y="10" width="42" height="42" fill="#0A0A12" rx="4"/>
+              <rect x="16" y="16" width="30" height="30" fill="white" rx="2"/>
+              <rect x="22" y="22" width="18" height="18" fill="#0A0A12" rx="2"/>
+              <!-- Top-right eye -->
+              <rect x="108" y="10" width="42" height="42" fill="#0A0A12" rx="4"/>
+              <rect x="114" y="16" width="30" height="30" fill="white" rx="2"/>
+              <rect x="120" y="22" width="18" height="18" fill="#0A0A12" rx="2"/>
+              <!-- Bottom-left eye -->
+              <rect x="10" y="108" width="42" height="42" fill="#0A0A12" rx="4"/>
+              <rect x="16" y="114" width="30" height="30" fill="white" rx="2"/>
+              <rect x="22" y="120" width="18" height="18" fill="#0A0A12" rx="2"/>
+              <!-- Data modules (simplified) -->
+              <rect x="60" y="10" width="6" height="6" fill="#0A0A12"/>
+              <rect x="72" y="10" width="6" height="6" fill="#0A0A12"/>
+              <rect x="84" y="10" width="6" height="6" fill="#0A0A12"/>
+              <rect x="60" y="22" width="6" height="6" fill="#0A0A12"/>
+              <rect x="84" y="22" width="6" height="6" fill="#0A0A12"/>
+              <rect x="60" y="34" width="6" height="6" fill="#0A0A12"/>
+              <rect x="72" y="34" width="6" height="6" fill="#0A0A12"/>
+              <rect x="10" y="60" width="6" height="6" fill="#0A0A12"/>
+              <rect x="22" y="60" width="6" height="6" fill="#0A0A12"/>
+              <rect x="34" y="60" width="6" height="6" fill="#0A0A12"/>
+              <rect x="10" y="72" width="6" height="6" fill="#0A0A12"/>
+              <rect x="34" y="72" width="6" height="6" fill="#0A0A12"/>
+              <rect x="10" y="84" width="6" height="6" fill="#0A0A12"/>
+              <rect x="22" y="84" width="6" height="6" fill="#0A0A12"/>
+              <!-- Center X logo in orange -->
+              <rect x="64" y="60" width="32" height="32" fill="#F47920" rx="6"/>
+              <text x="80" y="82" text-anchor="middle" font-size="18" font-weight="900" fill="white" font-family="sans-serif">X</text>
+              <!-- More data modules -->
+              <rect x="108" y="60" width="6" height="6" fill="#0A0A12"/>
+              <rect x="120" y="60" width="6" height="6" fill="#0A0A12"/>
+              <rect x="132" y="60" width="6" height="6" fill="#0A0A12"/>
+              <rect x="108" y="72" width="6" height="6" fill="#0A0A12"/>
+              <rect x="132" y="72" width="6" height="6" fill="#0A0A12"/>
+              <rect x="108" y="84" width="6" height="6" fill="#0A0A12"/>
+              <rect x="120" y="84" width="6" height="6" fill="#0A0A12"/>
+              <rect x="60" y="108" width="6" height="6" fill="#0A0A12"/>
+              <rect x="72" y="108" width="6" height="6" fill="#0A0A12"/>
+              <rect x="60" y="120" width="6" height="6" fill="#0A0A12"/>
+              <rect x="84" y="120" width="6" height="6" fill="#0A0A12"/>
+              <rect x="72" y="132" width="6" height="6" fill="#0A0A12"/>
+              <rect x="108" y="108" width="6" height="6" fill="#0A0A12"/>
+              <rect x="120" y="108" width="6" height="6" fill="#0A0A12"/>
+              <rect x="132" y="108" width="6" height="6" fill="#0A0A12"/>
+              <rect x="108" y="120" width="6" height="6" fill="#0A0A12"/>
+              <rect x="120" y="132" width="6" height="6" fill="#0A0A12"/>
+              <rect x="132" y="132" width="6" height="6" fill="#0A0A12"/>
+            </svg>
+          </div>
+          <div class="qr-id-chip">SHP_001 · XOHO</div>
+        </div>
+      </div>
+
+      <div class="qr-instructions">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="color:#F47920">ℹ️</span>
+          <span style="font-size:12px;font-weight:700">Comment utiliser le QR Code</span>
+        </div>
+        <div class="qr-step">
+          <div class="qr-step-icon">📸</div>
+          <div>
+            <div style="font-size:11px;font-weight:700">1. Prise en charge</div>
+            <div style="font-size:10px;color:#8E8EA0">Le livreur scanne au départ du colis.</div>
+          </div>
+        </div>
+        <div class="qr-step">
+          <div class="qr-step-icon">✅</div>
+          <div>
+            <div style="font-size:11px;font-weight:700">2. Livraison</div>
+            <div style="font-size:10px;color:#8E8EA0">Scan à la remise au destinataire.</div>
+          </div>
+        </div>
+        <div class="qr-step">
+          <div class="qr-step-icon">💸</div>
+          <div>
+            <div style="font-size:11px;font-weight:700">3. Paiement libéré</div>
+            <div style="font-size:10px;color:#8E8EA0">Le séquestre est débloqué automatiquement.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:16px 24px;display:flex;gap:10px">
+        <div class="btn-primary" style="height:48px;border-radius:14px;font-size:13px;flex:1">📤 Partager</div>
+        <div style="flex:1;height:48px;border-radius:14px;font-size:13px;background:rgba(244,121,32,0.08);border:1px solid rgba(244,121,32,0.3);color:#F47920;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:700;cursor:pointer">📷 Scanner</div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="screen" id="s-profile">
+      <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:0 8px;margin-bottom:0">
+        <span style="font-size:22px;cursor:pointer">←</span>
+        <span style="font-size:16px;font-weight:700">Mon profil</span>
+      </div>
+
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar">
+          AK
+          <div class="cam-badge">📷</div>
+        </div>
+        <div class="profile-name">Aziz Kofi</div>
+        <div class="profile-phone">+229 97 00 00 01</div>
+        <div class="kyc-badge">✓ Identité vérifiée</div>
+      </div>
+
+      <div class="profile-stats">
+        <div class="p-stat"><div class="p-stat-val">4.8 ⭐</div><div class="p-stat-lbl">Note</div></div>
+        <div class="p-stat"><div class="p-stat-val">234</div><div class="p-stat-lbl">Livraisons</div></div>
+        <div class="p-stat"><div class="p-stat-val" style="font-size:12px">Expéditeur</div><div class="p-stat-lbl">Rôle</div></div>
+      </div>
+
+      <div class="menu-list">
+        <div class="menu-item">
+          <div class="menu-icon">🪪</div>
+          <div class="menu-label">Vérification d'identité (KYC)</div>
+          <div class="menu-badge">Requis</div>
+          <div class="menu-chevron">›</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-icon">💳</div>
+          <div class="menu-label">Mon portefeuille</div>
+          <div class="menu-chevron">›</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-icon">📋</div>
+          <div class="menu-label">Historique des livraisons</div>
+          <div class="menu-chevron">›</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-icon">🔔</div>
+          <div class="menu-label">Notifications</div>
+          <div class="menu-chevron">›</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-icon">🔒</div>
+          <div class="menu-label">Sécurité & Confidentialité</div>
+          <div class="menu-chevron">›</div>
+        </div>
+      </div>
+
+      <div style="padding:12px 24px">
+        <div style="height:48px;border-radius:14px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);color:#EF4444;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:14px;cursor:pointer">
+          🚪 Se déconnecter
+        </div>
+      </div>
+      <div style="text-align:center;font-size:10px;color:#5A5A72;padding:8px">Xoho v1.0.0 · Made in Bénin 🇧🇯</div>
+    </div>
+
+    <!-- DRIVER HOME -->
+    <div class="screen" id="s-driver-home">
+      <div class="dh-header">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+          <span style="font-size:22px;cursor:pointer">←</span>
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:700">Mode Livreur</div>
+            <div style="font-size:11px;color:#8E8EA0">Trouvez des colis à livrer</div>
+          </div>
+          <div class="online-toggle toggle-on">
+            <div class="toggle-dot" style="background:#22C55E"></div>
+            En ligne
+          </div>
+        </div>
+      </div>
+
+      <div class="dh-stats">
+        <div class="dh-stat">
+          <div class="dh-stat-icon">📈</div>
+          <div class="dh-stat-val" style="color:#22C55E">3 200 F</div>
+          <div class="dh-stat-lbl">Aujourd'hui</div>
+        </div>
+        <div class="dh-stat">
+          <div class="dh-stat-icon">🚚</div>
+          <div class="dh-stat-val" style="color:#F47920">234</div>
+          <div class="dh-stat-lbl">Livraisons</div>
+        </div>
+        <div class="dh-stat">
+          <div class="dh-stat-icon">⭐</div>
+          <div class="dh-stat-val" style="color:#FBB024">4.8</div>
+          <div class="dh-stat-lbl">Note "Gbê"</div>
+        </div>
+      </div>
+
+      <div class="dh-btns">
+        <div class="btn-primary" style="height:46px;border-radius:12px;font-size:12px;flex:1">🛣️ Enregistrer trajet</div>
+        <div style="flex:1;height:46px;border-radius:12px;font-size:12px;background:rgba(244,121,32,0.08);border:1px solid rgba(244,121,32,0.3);color:#F47920;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:700;cursor:pointer">📷 Scanner QR</div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;padding:0 24px;margin-bottom:12px">
+        <span style="font-size:13px;font-weight:700">Colis disponibles</span>
+        <div style="background:#F47920;border-radius:8px;padding:2px 8px;font-size:11px;font-weight:700;color:white">2</div>
+      </div>
+
+      <div class="shipment-card">
+        <div class="sc-top">
+          <div class="sc-icon">📦</div>
+          <div class="sc-info">
+            <div class="sc-name">Colis de vêtements (5kg)</div>
+            <div class="sc-route">Cadjehoun → Dantokpa</div>
+          </div>
+          <div style="text-align:right">
+            <div class="sc-price">800 F</div>
+            <div class="sc-dist">3.5 km</div>
+          </div>
+        </div>
+        <div class="tag-row">
+          <div class="tag tag-assured">✅ Assuré</div>
+          <div style="margin-left:auto;font-size:12px;color:#5A5A72">›</div>
+        </div>
+      </div>
+
+      <div class="shipment-card">
+        <div class="sc-top">
+          <div class="sc-icon">📦</div>
+          <div class="sc-info">
+            <div class="sc-name">Pièces électroniques (2kg)</div>
+            <div class="sc-route">Cotonou → Parakou</div>
+          </div>
+          <div style="text-align:right">
+            <div class="sc-price">3 500 F</div>
+            <div class="sc-dist">412 km</div>
+          </div>
+        </div>
+        <div class="tag-row">
+          <div class="tag tag-assured">✅ Assuré Premium</div>
+          <div class="tag tag-interurban">🛣️ Interurbain</div>
+          <div style="margin-left:auto;font-size:12px;color:#5A5A72">›</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end phone-frame -->
+
+  <!-- INFO PANEL -->
+  <div class="info-panel">
+    <div class="info-card">
+      <h3>📐 Design System</h3>
+      <p><span class="legend-dot" style="background:#F47920"></span><strong>Orange #F47920</strong> — Couleur principale Xoho</p>
+      <p><span class="legend-dot" style="background:#0A0A12"></span><strong>Fond #0A0A12</strong> — Dark mode profond</p>
+      <p><span class="legend-dot" style="background:#1A1A2C"></span><strong>Carte #1A1A2C</strong> — Surfaces glassmorphism</p>
+      <p><span class="legend-dot" style="background:#22C55E"></span><strong>Succès #22C55E</strong> — Livré / Vérifié</p>
+      <p><span class="legend-dot" style="background:#3B82F6"></span><strong>Info #3B82F6</strong> — Départ / Interurbain</p>
+      <p>Police : <code>Nunito 400–900</code> — ronde et lisible</p>
+    </div>
+    <div class="info-card">
+      <h3>🏍️ Flux Utilisateur</h3>
+      <p>① <strong>Splash</strong> → Onboarding → Login OTP</p>
+      <p>② <strong>Accueil Carte</strong> → voit les livreurs en temps réel</p>
+      <p>③ <strong>Crée un colis</strong> (3 étapes) → publie l'annonce</p>
+      <p>④ Clique sur un livreur → <strong>Fiche livreur</strong> → paye 100F → contact débloqué</p>
+      <p>⑤ <strong>Tracking</strong> → QR Code scan → livraison confirmée</p>
+      <p>⑥ <strong>Portefeuille</strong> : recharge MTN MoMo / Moov Money</p>
+    </div>
+    <div class="info-card">
+      <h3>🔒 Sécurité</h3>
+      <p>• <strong>KYC</strong> : scan CIP + selfie obligatoire</p>
+      <p>• <strong>QR Code</strong> : scan départ + arrivée = preuve irréfutable</p>
+      <p>• <strong>Séquestre</strong> : paiement bloqué jusqu'à confirmation</p>
+      <p>• <strong>Commission</strong> : 10% prélevée côté serveur (Cloud Functions)</p>
+      <p>• <strong>Note "Gbê"</strong> : livreur &lt; 3★ → banni automatiquement</p>
+    </div>
+    <div class="info-card">
+      <h3>📡 Stack Technique</h3>
+      <p>• <code>Flutter 3.x</code> + <code>Riverpod 2</code></p>
+      <p>• <code>GoRouter</code> navigation + deep links</p>
+      <p>• <code>Firebase</code> Auth, Firestore, Functions, FCM</p>
+      <p>• <code>Google Maps</code> dark style personnalisé</p>
+      <p>• <code>qr_flutter</code> + <code>mobile_scanner</code></p>
+      <p>• <code>MTN MoMo API</code> + <code>Moov Money API</code></p>
+    </div>
+  </div>
+
+</div><!-- end phone-wrap -->
+
+<p style="margin-top:40px;font-size:11px;color:#5A5A72;text-align:center">
+  Xoho v1.0.0 · Made in Bénin 🇧🇯 · Tous droits réservés
+</p>
+
+<script>
+  function showScreen(name, tabEl) {
+    // Hide all screens
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    // Show target
+    document.getElementById('s-' + name).classList.add('active');
+    // Update tabs
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
