@@ -1,199 +1,208 @@
 // ─── Product detail page logic ────────────────────────────────────────────
-import { POLES, formatPrice, buildProductCard, showToast } from './app.js';
+import { supabase, storageUrl } from './supabase-config.js'
+import { POLES, formatPrice, buildProductCard, showToast } from './app.js'
 
-let currentProduct = null;
-let pendingToken   = null;
+let currentProduct = null
+let pendingToken   = null
 
 async function loadProduct() {
-  const params    = new URLSearchParams(window.location.search);
-  const productId = params.get('id');
-  if (!productId) { window.location.href = 'boutique.html'; return; }
+  const params    = new URLSearchParams(window.location.search)
+  const productId = params.get('id')
+  if (!productId) { window.location.href = 'boutique.html'; return }
 
   try {
-    const res  = await fetch(`api/products.php?id=${encodeURIComponent(productId)}`);
-    const data = await res.json();
-    if (!res.ok) { window.location.href = 'boutique.html'; return; }
-    currentProduct = data;
-    renderProduct(currentProduct);
-    loadRelated(currentProduct.pole, productId);
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .eq('id', productId)
+      .eq('published', true)
+      .single()
+
+    if (error || !data) { window.location.href = 'boutique.html'; return }
+    currentProduct = data
+    renderProduct(data)
+    loadRelated(data.pole, productId)
   } catch {
-    showToast('Erreur lors du chargement du produit.', 'error');
+    showToast('Erreur lors du chargement du produit.', 'error')
   }
 }
 
 function renderProduct(product) {
-  document.getElementById('pdLoading').classList.add('hidden');
-  document.getElementById('pdContent').classList.remove('hidden');
+  document.getElementById('pdLoading').classList.add('hidden')
+  document.getElementById('pdContent').classList.remove('hidden')
 
-  document.getElementById('pageTitle').textContent = `${product.name} — XOHO`;
-  document.querySelector('meta[name="description"]')?.setAttribute('content', product.short_desc || product.name);
+  document.getElementById('pageTitle').textContent = `${product.name} — XOHO`
+  document.querySelector('meta[name="description"]')?.setAttribute('content', product.short_desc || product.name)
 
-  const pole = POLES[product.pole] || { label: product.pole };
-  document.querySelector('#breadcrumbPole span').textContent = pole.label;
-  document.querySelector('#breadcrumbName span').textContent = product.name;
+  const pole = POLES[product.pole] || { label: product.pole }
+  document.querySelector('#breadcrumbPole span').textContent = pole.label
+  document.querySelector('#breadcrumbName span').textContent = product.name
 
-  const info   = POLES[product.pole] || { label: product.pole, color: '#64748B', bg: '#F1F5F9' };
-  const poleEl = document.getElementById('pdPoleTag');
-  poleEl.textContent     = info.label;
-  poleEl.style.background = info.bg;
-  poleEl.style.color      = info.color;
+  const info   = POLES[product.pole] || { label: product.pole, color: '#64748B', bg: '#F1F5F9' }
+  const poleEl = document.getElementById('pdPoleTag')
+  poleEl.textContent      = info.label
+  poleEl.style.background = info.bg
+  poleEl.style.color      = info.color
 
-  document.getElementById('pd-title').textContent    = product.name;
-  document.getElementById('pdShortDesc').textContent = product.short_desc || '';
-  document.getElementById('pdPrice').innerHTML       = `${formatPrice(product.price)} <small>FCFA</small>`;
-  document.getElementById('stickyPrice').textContent = formatPrice(product.price);
-
-  document.getElementById('buyModalProductName').textContent = product.name;
-  document.getElementById('buyTotal').textContent = formatPrice(product.price);
+  document.getElementById('pd-title').textContent    = product.name
+  document.getElementById('pdShortDesc').textContent = product.short_desc || ''
+  document.getElementById('pdPrice').innerHTML       = `${formatPrice(product.price)} <small>FCFA</small>`
+  document.getElementById('stickyPrice').textContent = formatPrice(product.price)
+  document.getElementById('buyModalProductName').textContent = product.name
+  document.getElementById('buyTotal').textContent = formatPrice(product.price)
 
   if (product.preview_url) {
-    const img = document.getElementById('pdPreviewImg');
-    if (img) img.src = product.preview_url;
+    const img = document.getElementById('pdPreviewImg')
+    if (img) img.src = storageUrl('previews', product.preview_url)
   }
 
-  const bullets  = (product.bullets || '').split('\n').filter(b => b.trim());
-  const bulletsEl = document.getElementById('pdBullets');
+  const bullets   = (product.bullets || '').split('\n').filter(b => b.trim())
+  const bulletsEl = document.getElementById('pdBullets')
   if (bulletsEl) {
     bulletsEl.innerHTML = bullets.map(b => `
       <li>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         ${b.trim()}
-      </li>`).join('');
+      </li>`).join('')
   }
 
-  const fullDescEl = document.getElementById('pdFullDesc');
+  const fullDescEl = document.getElementById('pdFullDesc')
   if (fullDescEl) {
-    fullDescEl.innerHTML = (product.full_desc || product.short_desc || '').replace(/\n/g, '<br>');
+    fullDescEl.innerHTML = (product.full_desc || product.short_desc || '').replace(/\n/g, '<br>')
   }
 
-  const fileInfoEl = document.getElementById('pdFileInfo');
+  const fileInfoEl = document.getElementById('pdFileInfo')
   if (fileInfoEl) {
     const infos = [
-      { label: 'Format',    value: product.format    || 'PDF'          },
-      { label: 'Taille',    value: product.file_size || 'N/A'          },
-      { label: 'Pôle',      value: info.label                          },
-      { label: 'Livraison', value: 'Instantanée'                       },
-    ];
+      { label: 'Format',    value: product.format    || 'PDF'      },
+      { label: 'Taille',    value: product.file_size || 'N/A'      },
+      { label: 'Pôle',      value: info.label                      },
+      { label: 'Livraison', value: 'Instantanée'                   },
+    ]
     fileInfoEl.innerHTML = infos.map(i => `
       <div>
         <div style="font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem">${i.label}</div>
         <div style="font-weight:600;color:var(--navy)">${i.value}</div>
-      </div>`).join('');
+      </div>`).join('')
   }
 
   const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target) } })
+  }, { threshold: 0.1 })
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el))
 }
 
 async function loadRelated(pole, excludeId) {
   try {
-    const res  = await fetch(`api/products.php?pole=${encodeURIComponent(pole)}`);
-    const data = await res.json();
-    if (!res.ok) return;
-    const related = data.filter(p => String(p.id) !== String(excludeId)).slice(0, 3);
-    if (related.length > 0) {
-      document.getElementById('relatedSection')?.classList.remove('hidden');
-      const relGrid = document.getElementById('relatedGrid');
-      if (relGrid) relGrid.innerHTML = related.map(buildProductCard).join('');
+    const { data } = await supabase
+      .from('products')
+      .select('*')
+      .eq('published', true)
+      .eq('pole', pole)
+      .neq('id', excludeId)
+      .limit(3)
+
+    if (data?.length) {
+      document.getElementById('relatedSection')?.classList.remove('hidden')
+      const grid = document.getElementById('relatedGrid')
+      if (grid) grid.innerHTML = data.map(buildProductCard).join('')
     }
   } catch { /* non-critical */ }
 }
 
 async function handleBuySubmit(e) {
-  e.preventDefault();
-  if (!currentProduct) return;
+  e.preventDefault()
+  if (!currentProduct) return
 
-  const nameEl  = document.getElementById('buyName');
-  const phoneEl = document.getElementById('buyPhone');
-  const emailEl = document.getElementById('buyEmail');
-  let valid = true;
+  const nameEl  = document.getElementById('buyName')
+  const phoneEl = document.getElementById('buyPhone')
+  const emailEl = document.getElementById('buyEmail')
+  let valid = true
 
-  [
+  ;[
     { el: nameEl,  errId: 'buyNameErr',  ok: () => nameEl.value.trim().length > 1 },
     { el: phoneEl, errId: 'buyPhoneErr', ok: () => /^[0-9]{8,}$/.test(phoneEl.value.replace(/\s/g, '')) },
     { el: emailEl, errId: 'buyEmailErr', ok: () => !emailEl.value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim()) },
   ].forEach(({ el, errId, ok }) => {
-    const errEl = document.getElementById(errId);
-    if (!ok()) { el.classList.add('error'); errEl?.classList.add('show'); valid = false; }
-    else        { el.classList.remove('error'); errEl?.classList.remove('show'); }
-  });
+    const errEl = document.getElementById(errId)
+    if (!ok()) { el.classList.add('error'); errEl?.classList.add('show'); valid = false }
+    else        { el.classList.remove('error'); errEl?.classList.remove('show') }
+  })
 
-  if (!valid) return;
+  if (!valid) return
 
-  const btn = document.getElementById('buySubmitBtn');
-  btn.disabled  = true;
-  btn.innerHTML = `<div class="spinner-full"></div> Traitement en cours…`;
+  const btn = document.getElementById('buySubmitBtn')
+  btn.disabled  = true
+  btn.innerHTML = `<div class="spinner-full"></div> Traitement en cours…`
 
   try {
-    // Create pending order in PHP backend
-    const res  = await fetch('api/orders.php', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({
-        productId:  currentProduct.id,
-        buyerName:  nameEl.value.trim(),
-        buyerPhone: phoneEl.value.trim(),
-        buyerEmail: emailEl.value.trim().toLowerCase(),
-      }),
-    });
-    const order = await res.json();
-    if (!res.ok) throw new Error(order.error || 'Erreur création commande');
+    // Créer la commande dans Supabase
+    const { data: order, error } = await supabase
+      .from('orders')
+      .insert({
+        product_id:   currentProduct.id,
+        product_name: currentProduct.name,
+        amount:       currentProduct.price,
+        buyer_name:   nameEl.value.trim(),
+        buyer_phone:  phoneEl.value.trim(),
+        buyer_email:  emailEl.value.trim().toLowerCase(),
+        status:       'pending',
+      })
+      .select()
+      .single()
 
-    pendingToken = order.token;
+    if (error) throw new Error(error.message)
+    pendingToken = order.download_token
 
-    // Launch Kkiapay widget
+    // Ouvrir Kkiapay
     if (typeof openKkiapayWidget === 'function') {
       openKkiapayWidget({
         amount:   currentProduct.price,
-        api_key:  'VOTRE_CLE_PUBLIQUE_KKIAPAY',  // ⚠️ Replace with your Kkiapay public key
-        sandbox:  true,                            // Set to false in production
+        api_key:  'VOTRE_CLE_PUBLIQUE_KKIAPAY', // ⚠️ Remplacez avec votre clé Kkiapay
+        sandbox:  true,                           // Passez à false en production
         phone:    phoneEl.value.trim(),
         name:     nameEl.value.trim(),
         email:    emailEl.value.trim(),
-        data:     JSON.stringify({ token: order.token }),
-        callback: `${window.location.origin}/succes.html?token=${order.token}`,
-      });
+        data:     JSON.stringify({ token: order.download_token }),
+        callback: `${window.location.origin}/succes.html?token=${order.download_token}`,
+      })
     } else {
-      // Kkiapay not loaded — dev/test redirect
-      window.location.href = `succes.html?token=${order.token}&status=test`;
+      // Mode test (sans Kkiapay chargé)
+      window.location.href = `succes.html?token=${order.download_token}&status=test`
     }
   } catch (err) {
-    showToast(err.message || 'Une erreur est survenue.', 'error');
+    showToast(err.message || 'Une erreur est survenue.', 'error')
   } finally {
-    btn.disabled  = false;
-    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Payer maintenant`;
+    btn.disabled  = false
+    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Payer maintenant`
   }
 }
 
-// Kkiapay payment success callback
+// Callback Kkiapay après paiement réussi
 window.addEventListener('message', async (e) => {
   if (e.data?.event === 'kkiapay.payment.success' && pendingToken) {
-    const txid = e.data?.data?.transactionId || '';
+    const txid = e.data?.data?.transactionId || ''
     try {
-      await fetch(`api/orders.php?action=confirm`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ token: pendingToken, transactionId: txid }),
-      });
-    } catch { /* ignore — succes.php handles status */ }
-    window.location.href = `succes.html?token=${pendingToken}`;
+      await supabase
+        .from('orders')
+        .update({ status: 'completed', kkiapay_txid: txid })
+        .eq('download_token', pendingToken)
+    } catch { /* ignore — succes.js handle */ }
+    window.location.href = `succes.html?token=${pendingToken}`
   }
-});
+})
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadProduct();
+  loadProduct()
+  document.getElementById('buyForm')?.addEventListener('submit', handleBuySubmit)
 
-  document.getElementById('buyForm')?.addEventListener('submit', handleBuySubmit);
-
-  const backBtn = document.getElementById('backBtn');
-  if (backBtn) { backBtn.style.display = 'inline-flex'; backBtn.addEventListener('click', () => history.back()); }
+  const backBtn = document.getElementById('backBtn')
+  if (backBtn) { backBtn.style.display = 'inline-flex'; backBtn.addEventListener('click', () => history.back()) }
 
   document.querySelectorAll('.form-input').forEach(input => {
     input.addEventListener('input', () => {
-      input.classList.remove('error');
-      document.getElementById(input.id + 'Err')?.classList.remove('show');
-    });
-  });
-});
+      input.classList.remove('error')
+      document.getElementById(input.id + 'Err')?.classList.remove('show')
+    })
+  })
+})
