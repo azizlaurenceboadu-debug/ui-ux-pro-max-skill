@@ -1,7 +1,8 @@
 # ── Netlify configuration for XOHO ──────────────────────────────
 
 [build]
-  publish = "xoho"
+  base    = "xoho"
+  publish = "."
 
 # ── Pretty URLs (remove .html extension) ───────────────────────
 
