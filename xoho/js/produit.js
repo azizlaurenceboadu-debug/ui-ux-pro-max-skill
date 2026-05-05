@@ -1,95 +1,78 @@
 // ─── Product detail page logic ────────────────────────────────────────────
-import { db } from './firebase-config.js';
-import {
-  doc, getDoc, collection, query, where, getDocs, limit, addDoc, serverTimestamp
-} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import { POLES, formatPrice, buildProductCard, showToast } from './app.js';
 
 let currentProduct = null;
+let pendingToken   = null;
 
-// ── Load product from Firestore ───────────────────────────────────────────
 async function loadProduct() {
-  const params = new URLSearchParams(window.location.search);
+  const params    = new URLSearchParams(window.location.search);
   const productId = params.get('id');
-
-  if (!productId) {
-    window.location.href = 'boutique.html';
-    return;
-  }
+  if (!productId) { window.location.href = 'boutique.html'; return; }
 
   try {
-    const snap = await getDoc(doc(db, 'products', productId));
-    if (!snap.exists() || !snap.data().published) {
-      window.location.href = 'boutique.html';
-      return;
-    }
-    currentProduct = { id: snap.id, ...snap.data() };
+    const res  = await fetch(`api/products.php?id=${encodeURIComponent(productId)}`);
+    const data = await res.json();
+    if (!res.ok) { window.location.href = 'boutique.html'; return; }
+    currentProduct = data;
     renderProduct(currentProduct);
     loadRelated(currentProduct.pole, productId);
-  } catch (err) {
-    console.error('loadProduct error:', err);
+  } catch {
     showToast('Erreur lors du chargement du produit.', 'error');
   }
 }
 
-// ── Render product on page ────────────────────────────────────────────────
 function renderProduct(product) {
-  // Hide loading, show content
   document.getElementById('pdLoading').classList.add('hidden');
   document.getElementById('pdContent').classList.remove('hidden');
 
-  // Update <title>
   document.getElementById('pageTitle').textContent = `${product.name} — XOHO`;
-  document.querySelector('meta[name="description"]').setAttribute('content', product.shortDesc || product.name);
+  document.querySelector('meta[name="description"]')?.setAttribute('content', product.short_desc || product.name);
 
-  // Breadcrumb
   const pole = POLES[product.pole] || { label: product.pole };
   document.querySelector('#breadcrumbPole span').textContent = pole.label;
   document.querySelector('#breadcrumbName span').textContent = product.name;
 
-  // Hero content
-  const poleEl = document.getElementById('pdPoleTag');
   const info   = POLES[product.pole] || { label: product.pole, color: '#64748B', bg: '#F1F5F9' };
-  poleEl.textContent = info.label;
+  const poleEl = document.getElementById('pdPoleTag');
+  poleEl.textContent     = info.label;
   poleEl.style.background = info.bg;
   poleEl.style.color      = info.color;
 
-  document.getElementById('pd-title').textContent     = product.name;
-  document.getElementById('pdShortDesc').textContent  = product.shortDesc || '';
-  document.getElementById('pdPrice').innerHTML        = `${formatPrice(product.price)} <small>FCFA</small>`;
-  document.getElementById('stickyPrice').textContent  = formatPrice(product.price);
+  document.getElementById('pd-title').textContent    = product.name;
+  document.getElementById('pdShortDesc').textContent = product.short_desc || '';
+  document.getElementById('pdPrice').innerHTML       = `${formatPrice(product.price)} <small>FCFA</small>`;
+  document.getElementById('stickyPrice').textContent = formatPrice(product.price);
 
-  // Buy modal
   document.getElementById('buyModalProductName').textContent = product.name;
   document.getElementById('buyTotal').textContent = formatPrice(product.price);
 
-  // Bullets
-  const bullets = (product.bullets || '').split('\n').filter(b => b.trim());
+  if (product.preview_url) {
+    const img = document.getElementById('pdPreviewImg');
+    if (img) img.src = product.preview_url;
+  }
+
+  const bullets  = (product.bullets || '').split('\n').filter(b => b.trim());
   const bulletsEl = document.getElementById('pdBullets');
   if (bulletsEl) {
     bulletsEl.innerHTML = bullets.map(b => `
       <li>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         ${b.trim()}
       </li>`).join('');
   }
 
-  // Full description
   const fullDescEl = document.getElementById('pdFullDesc');
-  if (fullDescEl && product.fullDesc) {
-    fullDescEl.innerHTML = product.fullDesc.replace(/\n/g, '<br/>');
-  } else if (fullDescEl) {
-    fullDescEl.textContent = product.shortDesc || '';
+  if (fullDescEl) {
+    fullDescEl.innerHTML = (product.full_desc || product.short_desc || '').replace(/\n/g, '<br>');
   }
 
-  // File info
   const fileInfoEl = document.getElementById('pdFileInfo');
   if (fileInfoEl) {
     const infos = [
-      { label: 'Format', value: product.format || 'PDF' },
-      { label: 'Taille', value: product.fileSize || 'N/A' },
-      { label: 'Pôle', value: info.label },
-      { label: 'Livraison', value: 'Instantanée' },
+      { label: 'Format',    value: product.format    || 'PDF'          },
+      { label: 'Taille',    value: product.file_size || 'N/A'          },
+      { label: 'Pôle',      value: info.label                          },
+      { label: 'Livraison', value: 'Instantanée'                       },
     ];
     fileInfoEl.innerHTML = infos.map(i => `
       <div>
@@ -98,151 +81,119 @@ function renderProduct(product) {
       </div>`).join('');
   }
 
-  // Scroll reveal
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 }
 
-// ── Load related products ─────────────────────────────────────────────────
 async function loadRelated(pole, excludeId) {
   try {
-    const q = query(
-      collection(db, 'products'),
-      where('published', '==', true),
-      where('pole', '==', pole),
-      limit(4)
-    );
-    const snap = await getDocs(q);
-    const related = snap.docs
-      .map(d => ({ id: d.id, ...d.data() }))
-      .filter(p => p.id !== excludeId)
-      .slice(0, 3);
-
+    const res  = await fetch(`api/products.php?pole=${encodeURIComponent(pole)}`);
+    const data = await res.json();
+    if (!res.ok) return;
+    const related = data.filter(p => String(p.id) !== String(excludeId)).slice(0, 3);
     if (related.length > 0) {
-      document.getElementById('relatedSection').classList.remove('hidden');
-      document.getElementById('relatedGrid').innerHTML = related.map(buildProductCard).join('');
+      document.getElementById('relatedSection')?.classList.remove('hidden');
+      const relGrid = document.getElementById('relatedGrid');
+      if (relGrid) relGrid.innerHTML = related.map(buildProductCard).join('');
     }
-  } catch (err) {
-    console.error('loadRelated error:', err);
-  }
+  } catch { /* non-critical */ }
 }
 
-// ── Handle buy form submit (Kkiapay integration) ──────────────────────────
 async function handleBuySubmit(e) {
   e.preventDefault();
   if (!currentProduct) return;
 
-  const name  = document.getElementById('buyName');
-  const phone = document.getElementById('buyPhone');
-  const email = document.getElementById('buyEmail');
+  const nameEl  = document.getElementById('buyName');
+  const phoneEl = document.getElementById('buyPhone');
+  const emailEl = document.getElementById('buyEmail');
   let valid = true;
 
-  // Validate
   [
-    { el: name,  err: 'buyNameErr',  check: () => name.value.trim().length > 1 },
-    { el: phone, err: 'buyPhoneErr', check: () => /^[0-9]{8,}$/.test(phone.value.replace(/\s/g, '')) },
-    { el: email, err: 'buyEmailErr', check: () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()) },
-  ].forEach(({ el, err, check }) => {
-    const errEl = document.getElementById(err);
-    if (!check()) {
-      el.classList.add('error');
-      errEl.classList.add('show');
-      valid = false;
-    } else {
-      el.classList.remove('error');
-      errEl.classList.remove('show');
-    }
+    { el: nameEl,  errId: 'buyNameErr',  ok: () => nameEl.value.trim().length > 1 },
+    { el: phoneEl, errId: 'buyPhoneErr', ok: () => /^[0-9]{8,}$/.test(phoneEl.value.replace(/\s/g, '')) },
+    { el: emailEl, errId: 'buyEmailErr', ok: () => !emailEl.value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim()) },
+  ].forEach(({ el, errId, ok }) => {
+    const errEl = document.getElementById(errId);
+    if (!ok()) { el.classList.add('error'); errEl?.classList.add('show'); valid = false; }
+    else        { el.classList.remove('error'); errEl?.classList.remove('show'); }
   });
 
   if (!valid) return;
 
   const btn = document.getElementById('buySubmitBtn');
-  btn.classList.add('loading');
+  btn.disabled  = true;
   btn.innerHTML = `<div class="spinner-full"></div> Traitement en cours…`;
-  btn.disabled = true;
 
   try {
-    // Create a pending order in Firestore first
-    const orderRef = await addDoc(collection(db, 'orders'), {
-      productId:   currentProduct.id,
-      productName: currentProduct.name,
-      amount:      currentProduct.price,
-      buyerName:   name.value.trim(),
-      buyerPhone:  phone.value.trim(),
-      buyerEmail:  email.value.trim().toLowerCase(),
-      status:      'pending',
-      createdAt:   serverTimestamp(),
-      downloadUrl: currentProduct.fileUrl || '',
+    // Create pending order in PHP backend
+    const res  = await fetch('api/orders.php', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        productId:  currentProduct.id,
+        buyerName:  nameEl.value.trim(),
+        buyerPhone: phoneEl.value.trim(),
+        buyerEmail: emailEl.value.trim().toLowerCase(),
+      }),
     });
+    const order = await res.json();
+    if (!res.ok) throw new Error(order.error || 'Erreur création commande');
 
-    // Launch Kkiapay payment widget
-    // Ensure Kkiapay SDK script is loaded (add to HTML if not present)
+    pendingToken = order.token;
+
+    // Launch Kkiapay widget
     if (typeof openKkiapayWidget === 'function') {
       openKkiapayWidget({
-        amount:    currentProduct.price,
-        api_key:   'VOTRE_CLE_PUBLIQUE_KKIAPAY',   // Replace with your Kkiapay public key
-        sandbox:   true,                             // Set to false in production
-        phone:     phone.value.trim(),
-        name:      name.value.trim(),
-        email:     email.value.trim(),
-        data:      orderId(orderRef.id),
-        callback:  window.location.origin + '/xoho/succes.html?orderId=' + orderRef.id,
+        amount:   currentProduct.price,
+        api_key:  'VOTRE_CLE_PUBLIQUE_KKIAPAY',  // ⚠️ Replace with your Kkiapay public key
+        sandbox:  true,                            // Set to false in production
+        phone:    phoneEl.value.trim(),
+        name:     nameEl.value.trim(),
+        email:    emailEl.value.trim(),
+        data:     JSON.stringify({ token: order.token }),
+        callback: `${window.location.origin}/succes.html?token=${order.token}`,
       });
     } else {
-      // Kkiapay SDK not loaded — redirect to success with orderId for testing
-      window.location.href = `succes.html?orderId=${orderRef.id}&status=test`;
+      // Kkiapay not loaded — dev/test redirect
+      window.location.href = `succes.html?token=${order.token}&status=test`;
     }
-
-    btn.classList.remove('loading');
-    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Payer maintenant`;
-    btn.disabled = false;
   } catch (err) {
-    console.error('Buy error:', err);
-    btn.classList.remove('loading');
+    showToast(err.message || 'Une erreur est survenue.', 'error');
+  } finally {
+    btn.disabled  = false;
     btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Payer maintenant`;
-    btn.disabled = false;
-    showToast('Une erreur est survenue. Veuillez réessayer.', 'error');
   }
 }
 
-function orderId(id) {
-  return JSON.stringify({ orderId: id });
-}
-
-// ── Kkiapay success callback ──────────────────────────────────────────────
-// Called by Kkiapay widget after successful payment
-window.addEventListener('message', (e) => {
-  if (e.data && e.data.event === 'kkiapay.payment.success') {
-    const params = new URLSearchParams(window.location.search);
-    const productId = params.get('id');
-    // orderId should be in e.data.data
-    window.location.href = `succes.html?orderId=${e.data.data}&productId=${productId}`;
+// Kkiapay payment success callback
+window.addEventListener('message', async (e) => {
+  if (e.data?.event === 'kkiapay.payment.success' && pendingToken) {
+    const txid = e.data?.data?.transactionId || '';
+    try {
+      await fetch(`api/orders.php?action=confirm`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ token: pendingToken, transactionId: txid }),
+      });
+    } catch { /* ignore — succes.php handles status */ }
+    window.location.href = `succes.html?token=${pendingToken}`;
   }
 });
 
-// ── Init ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   loadProduct();
 
-  const buyForm = document.getElementById('buyForm');
-  if (buyForm) buyForm.addEventListener('submit', handleBuySubmit);
+  document.getElementById('buyForm')?.addEventListener('submit', handleBuySubmit);
 
-  // Show back button
   const backBtn = document.getElementById('backBtn');
-  if (backBtn) {
-    backBtn.style.display = 'inline-flex';
-    backBtn.addEventListener('click', () => history.back());
-  }
+  if (backBtn) { backBtn.style.display = 'inline-flex'; backBtn.addEventListener('click', () => history.back()); }
 
-  // Clear error on input
   document.querySelectorAll('.form-input').forEach(input => {
     input.addEventListener('input', () => {
       input.classList.remove('error');
-      const errId = input.id + 'Err';
-      const errEl = document.getElementById(errId.replace('buy', 'buy'));
-      if (errEl) errEl.classList.remove('show');
+      document.getElementById(input.id + 'Err')?.classList.remove('show');
     });
   });
 });

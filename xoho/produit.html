@@ -300,7 +300,7 @@
   const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}}),{threshold:.1});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 </script>
-<script type="module" src="js/firebase-config.js"></script>
+<script src="https://cdn.kkiapay.me/k.js"></script>
 <script type="module" src="js/produit.js"></script>
 </body>
 </html>

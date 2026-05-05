@@ -1,79 +1,70 @@
 // ─── Success / Download page logic ───────────────────────────────────────
-import { db } from './firebase-config.js';
-import {
-  doc, getDoc, updateDoc, serverTimestamp
-} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 async function init() {
-  const params  = new URLSearchParams(window.location.search);
-  const orderId = params.get('orderId');
-  const status  = params.get('status'); // 'test' for sandbox
+  const params    = new URLSearchParams(window.location.search);
+  const token     = params.get('token');
+  const testMode  = params.get('status') === 'test';
 
-  const loadEl   = document.getElementById('loadingState');
+  const loadEl    = document.getElementById('loadingState');
   const successEl = document.getElementById('successState');
-  const errorEl  = document.getElementById('errorState');
+  const errorEl   = document.getElementById('errorState');
 
-  if (!orderId) {
+  if (!token) {
     show(errorEl, loadEl);
-    document.getElementById('errorMsg').textContent = 'Commande introuvable. Veuillez contacter le support.';
+    document.getElementById('errorMsg').textContent = 'Commande introuvable. Contactez le support.';
     return;
   }
 
-  try {
-    // Fetch order from Firestore
-    const orderSnap = await getDoc(doc(db, 'orders', orderId));
+  // In test/sandbox mode, confirm the order before checking
+  if (testMode) {
+    try {
+      await fetch(`api/orders.php?action=confirm`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ token, transactionId: 'TEST_' + Date.now() }),
+      });
+    } catch { /* ignore */ }
+  }
 
-    if (!orderSnap.exists()) {
+  try {
+    const res   = await fetch(`api/orders.php?token=${encodeURIComponent(token)}`);
+    const order = await res.json();
+
+    if (!res.ok) {
       show(errorEl, loadEl);
-      document.getElementById('errorMsg').textContent = "Commande introuvable. Si vous avez payé, contactez-nous via WhatsApp.";
+      document.getElementById('errorMsg').textContent = order.error || "Commande introuvable. Si vous avez payé, contactez-nous via WhatsApp.";
       return;
     }
 
-    const order = orderSnap.data();
-
-    // Accept 'completed' or 'test' (sandbox testing)
-    const isPaid = order.status === 'completed' || status === 'test';
+    const isPaid = ['completed', 'accessed'].includes(order.status) || testMode;
 
     if (!isPaid) {
       show(errorEl, loadEl);
-      document.getElementById('errorMsg').textContent = "Votre paiement n'a pas encore été confirmé. Veuillez attendre ou contacter le support.";
+      document.getElementById('errorMsg').textContent = "Votre paiement n'a pas encore été confirmé. Attendez quelques instants ou contactez le support.";
       return;
     }
 
-    // Mark order as accessed if not already
-    if (order.status !== 'accessed') {
-      await updateDoc(doc(db, 'orders', orderId), {
-        status: 'accessed',
-        accessedAt: serverTimestamp(),
-      });
-    }
-
-    // Show success
     show(successEl, loadEl);
 
-    // Populate UI
-    document.getElementById('productNameDisplay').textContent = order.productName || '—';
-    document.getElementById('emailDisplay').textContent       = order.buyerEmail  || '—';
+    document.getElementById('productNameDisplay').textContent = order.product_name || '—';
+    document.getElementById('emailDisplay').textContent       = order.buyer_email  || '—';
 
-    // Download button
     const dlBtn = document.getElementById('downloadBtn');
-    if (order.downloadUrl) {
-      dlBtn.href = order.downloadUrl;
-      dlBtn.setAttribute('download', '');
+    if (order.download_url) {
+      dlBtn.href = order.download_url;
     } else {
       dlBtn.style.display = 'none';
-      document.getElementById('successMsg').textContent =
-        'Votre document vous a été envoyé par Email. Vérifiez votre boîte de réception.';
+      const msgEl = document.getElementById('successMsg');
+      if (msgEl) msgEl.textContent = 'Votre document vous a été envoyé par email. Vérifiez votre boîte de réception.';
     }
 
-    // WhatsApp share
-    const msg = encodeURIComponent(`J'ai acheté "${order.productName}" sur XOHO pour seulement ${order.amount} FCFA ! 🎉 Découvre leurs documents pros → https://xoho.bj`);
-    document.getElementById('waShareBtn').href = `https://wa.me/?text=${msg}`;
+    const msg = encodeURIComponent(`J'ai acheté "${order.product_name}" sur XOHO pour seulement ${order.amount} FCFA ! 🎉 Découvrez leurs documents → https://xoho.bj`);
+    const waBtn = document.getElementById('waShareBtn');
+    if (waBtn) waBtn.href = `https://wa.me/?text=${msg}`;
 
-  } catch (err) {
-    console.error('succes.js error:', err);
+  } catch {
     show(errorEl, loadEl);
-    document.getElementById('errorMsg').textContent = "Une erreur est survenue. Veuillez contacter le support WhatsApp.";
+    document.getElementById('errorMsg').textContent = "Une erreur est survenue. Contactez le support WhatsApp.";
   }
 }
 

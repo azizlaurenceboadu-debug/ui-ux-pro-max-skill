@@ -1,0 +1,72 @@
+# ─── XOHO Apache Configuration (Systalink shared hosting) ────────────────
+
+Options -Indexes
+
+# ── URL Rewriting ──────────────────────────────────────────────────────────
+RewriteEngine On
+
+# Redirect HTTP → HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Clean URLs (optional — remove .html extension)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^boutique$   boutique.html  [L]
+RewriteRule ^produit$    produit.html   [L]
+RewriteRule ^succes$     succes.html    [L]
+RewriteRule ^admin$      admin.html     [L]
+
+# ── Security Headers ───────────────────────────────────────────────────────
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+  # Cache static assets
+  <FilesMatch "\.(css|js|svg|png|jpg|jpeg|webp|woff2|woff)$">
+    Header set Cache-Control "public, max-age=2592000, immutable"
+  </FilesMatch>
+  # No cache for HTML
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# ── PHP Settings ───────────────────────────────────────────────────────────
+<IfModule mod_php.c>
+  php_value upload_max_filesize  52M
+  php_value post_max_size        55M
+  php_value memory_limit         128M
+  php_value max_execution_time   60
+  php_value session.cookie_httponly 1
+  php_value session.cookie_secure   1
+  php_value session.cookie_samesite Strict
+</IfModule>
+
+# ── Deny access to sensitive files ────────────────────────────────────────
+<FilesMatch "(^\.env|config\.php|schema\.sql|seed_admin\.php|firestore\.rules|storage\.rules|firebase\.json)$">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+
+# Block access to api/config.php and api/schema.sql directly
+<Files "config.php">
+  Order allow,deny
+  Deny from all
+</Files>
+<Files "schema.sql">
+  Order allow,deny
+  Deny from all
+</Files>
+<Files "seed_admin.php">
+  Order allow,deny
+  Deny from all
+</Files>
+
+# ── Protect uploads directory (no direct PHP execution) ───────────────────
+<IfModule mod_rewrite.c>
+  RewriteRule ^uploads/.*\.(php|php3|php4|php5|phtml|pl|py|cgi)$ - [F,L]
+</IfModule>
