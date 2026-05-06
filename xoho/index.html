@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="XOHO – Téléchargez des outils professionnels dès 100f FCFA. Modèles, guides, fiches académiques, livraison instantanée par MoMo/Flooz."/>
+  <title>XOHO – Micro-Solutions Numériques | Outils pros dès 100f</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<!-- Scroll progress -->
+<div id="scroll-progress" aria-hidden="true"></div>
+
+<!-- ══════════════════ NAVBAR ══════════════════ -->
+<nav class="navbar" id="navbar" role="navigation" aria-label="Navigation principale">
+  <div class="container">
+    <a href="index.html" class="nav-logo" aria-label="XOHO Accueil">
+      <img src="assets/logo.svg" alt="XOHO logo" class="nav-logo-img" width="44" height="32"/>
+      <div class="nav-logo-text">
+        <span class="nav-logo-name">XOHO</span>
+        <span class="nav-logo-sub">Micro-Solutions Numériques</span>
+      </div>
+    </a>
+
+    <div class="nav-links" role="list">
+      <a href="index.html" class="active" role="listitem">Accueil</a>
+      <a href="boutique.html" role="listitem">Boutique</a>
+      <a href="#comment-ca-marche" role="listitem">Comment ça marche</a>
+      <a href="#temoignages" role="listitem">Témoignages</a>
+    </div>
+
+    <div class="nav-actions">
+      <a href="boutique.html" class="btn btn-primary btn-sm hidden-mobile" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Boutique
+      </a>
+      <button class="nav-hamburger" id="hamburgerBtn" aria-label="Menu" aria-expanded="false" aria-controls="navDrawer">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile drawer -->
+<div class="nav-drawer" id="navDrawer" role="dialog" aria-label="Menu mobile" aria-modal="true">
+  <a href="index.html">Accueil</a>
+  <a href="boutique.html">Boutique</a>
+  <a href="#comment-ca-marche">Comment ça marche</a>
+  <a href="#temoignages">Témoignages</a>
+  <a href="boutique.html" class="btn btn-primary">Explorer le catalogue</a>
+</div>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section class="hero" aria-labelledby="hero-title">
+  <!-- Background effects -->
+  <div class="hero-glow hero-glow-1" aria-hidden="true"></div>
+  <div class="hero-glow hero-glow-2" aria-hidden="true"></div>
+  <div class="particles" aria-hidden="true" id="particles"></div>
+
+  <div class="container">
+    <div class="hero-inner">
+      <!-- Left: text -->
+      <div class="hero-copy">
+        <div class="hero-badge" aria-label="Statut : actif">
+          <span aria-hidden="true"></span>
+          Plateforme active · +1 000 utilisateurs
+        </div>
+
+        <h1 class="hero-title" id="hero-title">
+          Tes outils pros<br/>
+          à partir de <span class="grad">100f FCFA</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Modèles de documents, guides officiels, fiches académiques — téléchargement instantané après paiement Mobile Money ou Flooz.
+        </p>
+
+        <div class="hero-ctas">
+          <a href="boutique.html" class="btn btn-white btn-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+            Explorer le catalogue
+          </a>
+          <a href="#comment-ca-marche" class="btn btn-outline" style="border-color:rgba(255,255,255,.35);color:#fff">
+            Comment ça marche ?
+          </a>
+        </div>
+
+        <div class="hero-trust" aria-label="Garanties">
+          <div class="hero-trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Paiement MoMo/Flooz sécurisé
+          </div>
+          <div class="hero-trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Téléchargement instantané
+          </div>
+          <div class="hero-trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Support WhatsApp 7j/7
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: animated card -->
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-card">
+          <div class="hero-card-header">
+            <div class="hero-card-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <span class="hero-card-label">Catalogue XOHO</span>
+          </div>
+
+          <!-- Doc previews -->
+          <div class="hero-doc-preview">
+            <div class="hero-doc-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <div>
+              <div class="hero-doc-title">Modèle Facture OHADA</div>
+              <div class="hero-doc-meta">Pôle Business · Excel + PDF</div>
+            </div>
+            <div class="hero-doc-price">500f</div>
+          </div>
+
+          <div class="hero-doc-preview">
+            <div class="hero-doc-icon" style="background:linear-gradient(135deg,#059669,#10B981)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div>
+              <div class="hero-doc-title">Guide Demande IFU Bénin</div>
+              <div class="hero-doc-meta">Pôle Citoyen · PDF</div>
+            </div>
+            <div class="hero-doc-price">200f</div>
+          </div>
+
+          <div class="hero-doc-preview" style="margin-bottom:0">
+            <div class="hero-doc-icon" style="background:linear-gradient(135deg,#D97706,#F59E0B)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" aria-hidden="true"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+            </div>
+            <div>
+              <div class="hero-doc-title">Fiche Révision DCG UE1</div>
+              <div class="hero-doc-meta">Pôle Académique · PDF</div>
+            </div>
+            <div class="hero-doc-price">100f</div>
+          </div>
+
+          <div class="hero-stats-row">
+            <div class="hero-stat"><div class="hero-stat-val">50+</div><div class="hero-stat-lbl">Documents</div></div>
+            <div class="hero-stat"><div class="hero-stat-val">5</div><div class="hero-stat-lbl">Pôles</div></div>
+            <div class="hero-stat"><div class="hero-stat-val">100%</div><div class="hero-stat-lbl">Sécurisé</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ REASSURANCE TICKER ══════════════════ -->
+<div class="reassurance" aria-label="Garanties XOHO">
+  <div class="reassurance-track" aria-hidden="true">
+    <!-- duplicated for infinite scroll -->
+    <span class="reassurance-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Paiement Mobile Money sécurisé</span>
+    <span class="reassurance-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Téléchargement instantané</span>
+    <span class="reassurance-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>+1 000 utilisateurs satisfaits</span>
+    <span class="reassurance-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Support WhatsApp 7j/7</span>
+    <span class="reassurance-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Documents 100% légaux &amp; conformes</span>
+    <span class="reassurance-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Envoi automatique par Email &amp; WhatsApp</span>
+    <!-- duplicate -->
+    <span class="reassurance-item" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Paiement Mobile Money sécurisé</span>
+    <span class="reassurance-item" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Téléchargement instantané</span>
+    <span class="reassurance-item" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>+1 000 utilisateurs satisfaits</span>
+    <span class="reassurance-item" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Support WhatsApp 7j/7</span>
+    <span class="reassurance-item" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Documents 100% légaux &amp; conformes</span>
+    <span class="reassurance-item" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Envoi automatique par Email &amp; WhatsApp</span>
+  </div>
+</div>
+
+<!-- ══════════════════ 5 PÔLES ══════════════════ -->
+<section class="section" id="poles" aria-labelledby="poles-title">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        5 Pôles
+      </div>
+      <h2 id="poles-title">Un outil pour chaque besoin</h2>
+      <p>Explore nos 5 catégories et trouve le document qu'il te faut en quelques secondes.</p>
+    </div>
+
+    <div class="poles-grid">
+      <a href="boutique.html?pole=administratif" class="pole-card pole-admin reveal reveal-delay-1" aria-label="Pôle Administratif">
+        <div class="pole-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <div class="pole-name">Pôle Administratif</div>
+        <div class="pole-count">Lettres · Demandes</div>
+      </a>
+
+      <a href="boutique.html?pole=academique" class="pole-card pole-academic reveal reveal-delay-2" aria-label="Pôle Académique">
+        <div class="pole-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        </div>
+        <div class="pole-name">Pôle Académique</div>
+        <div class="pole-count">Fiches DCG · BTS</div>
+      </a>
+
+      <a href="boutique.html?pole=citoyen" class="pole-card pole-citizen reveal reveal-delay-3" aria-label="Pôle Citoyen">
+        <div class="pole-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+        </div>
+        <div class="pole-name">Pôle Citoyen</div>
+        <div class="pole-count">Guides IFU · e-services</div>
+      </a>
+
+      <a href="boutique.html?pole=business" class="pole-card pole-business reveal reveal-delay-4" aria-label="Pôle Business">
+        <div class="pole-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <div class="pole-name">Pôle Business</div>
+        <div class="pole-count">Factures · Excel</div>
+      </a>
+
+      <a href="boutique.html?pole=vie-pratique" class="pole-card pole-practical reveal reveal-delay-5" aria-label="Pôle Vie Pratique">
+        <div class="pole-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div class="pole-name">Vie Pratique</div>
+        <div class="pole-count">Budgets · Plannings</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ TOP VENTES ══════════════════ -->
+<section class="section" style="background:#fff;padding-top:5rem;padding-bottom:5rem" aria-labelledby="topsales-title">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Top Ventes
+      </div>
+      <h2 id="topsales-title">Les plus populaires</h2>
+      <p>Les documents que nos clients achètent le plus souvent.</p>
+    </div>
+
+    <div class="products-grid" id="topSalesGrid">
+      <!-- Skeleton placeholders -->
+      <div class="product-card" style="pointer-events:none" aria-busy="true">
+        <div class="product-card-thumb skeleton" style="background:none;height:160px"></div>
+        <div class="product-card-body" style="gap:.75rem;display:flex;flex-direction:column">
+          <div class="skeleton" style="height:20px;width:60%"></div>
+          <div class="skeleton" style="height:16px;width:100%"></div>
+          <div class="skeleton" style="height:16px;width:80%"></div>
+          <div class="skeleton" style="height:40px;margin-top:.5rem"></div>
+        </div>
+      </div>
+      <div class="product-card" style="pointer-events:none" aria-busy="true">
+        <div class="product-card-thumb skeleton" style="background:none;height:160px"></div>
+        <div class="product-card-body" style="gap:.75rem;display:flex;flex-direction:column">
+          <div class="skeleton" style="height:20px;width:60%"></div>
+          <div class="skeleton" style="height:16px;width:100%"></div>
+          <div class="skeleton" style="height:16px;width:80%"></div>
+          <div class="skeleton" style="height:40px;margin-top:.5rem"></div>
+        </div>
+      </div>
+      <div class="product-card" style="pointer-events:none" aria-busy="true">
+        <div class="product-card-thumb skeleton" style="background:none;height:160px"></div>
+        <div class="product-card-body" style="gap:.75rem;display:flex;flex-direction:column">
+          <div class="skeleton" style="height:20px;width:60%"></div>
+          <div class="skeleton" style="height:16px;width:100%"></div>
+          <div class="skeleton" style="height:16px;width:80%"></div>
+          <div class="skeleton" style="height:40px;margin-top:.5rem"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-6 reveal">
+      <a href="boutique.html" class="btn btn-outline">
+        Voir tout le catalogue
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ COMMENT ÇA MARCHE ══════════════════ -->
+<section class="section" id="comment-ca-marche" aria-labelledby="how-title">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Simple & Rapide
+      </div>
+      <h2 id="how-title">Commande en 4 étapes</h2>
+      <p>De la découverte au téléchargement, tout se passe en moins de 2 minutes.</p>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card reveal reveal-delay-1">
+        <div class="step-num" aria-label="Étape 1">1</div>
+        <h3 class="step-title">Choisis ton document</h3>
+        <p class="step-desc">Filtre par pôle ou cherche directement dans le catalogue.</p>
+      </div>
+
+      <div class="step-card reveal reveal-delay-2">
+        <div class="step-num" aria-label="Étape 2">2</div>
+        <h3 class="step-title">Clique sur Acheter</h3>
+        <p class="step-desc">Entre ton Email et ton numéro de téléphone MoMo/Flooz.</p>
+      </div>
+
+      <div class="step-card reveal reveal-delay-3">
+        <div class="step-num" aria-label="Étape 3">3</div>
+        <h3 class="step-title">Valide le paiement</h3>
+        <p class="step-desc">Confirme sur ton téléphone — paiement 100% sécurisé via Kkiapay.</p>
+      </div>
+
+      <div class="step-card reveal reveal-delay-4">
+        <div class="step-num" aria-label="Étape 4">4</div>
+        <h3 class="step-title">Télécharge immédiatement</h3>
+        <p class="step-desc">Lien direct + envoi automatique par Email et WhatsApp.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ TÉMOIGNAGES ══════════════════ -->
+<section class="section" id="temoignages" style="background:#fff" aria-labelledby="testi-title">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        Témoignages
+      </div>
+      <h2 id="testi-title">Ce qu'ils en pensent</h2>
+      <p>Des milliers de béninois font confiance à XOHO chaque jour.</p>
+    </div>
+
+    <div class="testi-grid">
+      <div class="testi-card reveal reveal-delay-1">
+        <div class="testi-stars" aria-label="5 étoiles">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="testi-text">"J'ai téléchargé le modèle de facture OHADA en 2 minutes. Impeccable, j'ai envoyé à mon client le même jour !"</p>
+        <div class="testi-author">
+          <div class="testi-avatar" aria-hidden="true">K</div>
+          <div>
+            <div class="testi-name">Kofi A.</div>
+            <div class="testi-role">Entrepreneur, Cotonou</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card reveal reveal-delay-2">
+        <div class="testi-stars" aria-label="5 étoiles">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="testi-text">"La fiche de révision DCG m'a sauvé pour mes examens. À 100f c'est vraiment pas cher pour la qualité !"</p>
+        <div class="testi-author">
+          <div class="testi-avatar" aria-hidden="true">A</div>
+          <div>
+            <div class="testi-name">Aïssatou B.</div>
+            <div class="testi-role">Étudiante BTS, Porto-Novo</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card reveal reveal-delay-3">
+        <div class="testi-stars" aria-label="5 étoiles">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="testi-text">"Le guide IFU m'a évité plusieurs allers-retours. Tout était clair, étape par étape. Je recommande à tous les commerçants."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" aria-hidden="true">M</div>
+          <div>
+            <div class="testi-name">Mawuli D.</div>
+            <div class="testi-role">Commerçant, Parakou</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ CTA BANNER ══════════════════ -->
+<section class="section" aria-labelledby="cta-title">
+  <div class="container">
+    <div class="cta-banner reveal">
+      <h2 id="cta-title">Prêt à télécharger ton premier outil ?</h2>
+      <p>Plus de 50 documents disponibles. Paiement sécurisé, livraison immédiate.</p>
+      <div class="btns">
+        <a href="boutique.html" class="btn btn-white btn-lg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          Explorer le catalogue
+        </a>
+        <a href="https://wa.me/22900000000?text=Bonjour%20XOHO,%20j'ai%20besoin%20d'aide" class="btn btn-outline" style="border-color:rgba(255,255,255,.35);color:#fff" target="_blank" rel="noopener noreferrer">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Contacter sur WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer class="footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-grid">
+      <!-- Brand -->
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo" style="margin-bottom:.5rem" aria-label="XOHO Accueil">
+          <img src="assets/logo-white.svg" alt="XOHO" width="40" height="29"/>
+          <div class="nav-logo-text">
+            <span class="nav-logo-name" style="color:#fff">XOHO</span>
+            <span class="nav-logo-sub" style="color:rgba(255,255,255,.4)">Micro-Solutions Numériques</span>
+          </div>
+        </a>
+        <p>La plateforme des outils professionnels abordables au Bénin. Documents certifiés, paiement sécurisé, livraison immédiate.</p>
+        <div class="footer-social" aria-label="Réseaux sociaux">
+          <a href="#" aria-label="Facebook" rel="noopener noreferrer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+          </a>
+          <a href="#" aria-label="WhatsApp" rel="noopener noreferrer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Catalogue -->
+      <div>
+        <h3 class="footer-col-title">Catalogue</h3>
+        <ul class="footer-col-links">
+          <li><a href="boutique.html?pole=administratif">Pôle Administratif</a></li>
+          <li><a href="boutique.html?pole=academique">Pôle Académique</a></li>
+          <li><a href="boutique.html?pole=citoyen">Pôle Citoyen</a></li>
+          <li><a href="boutique.html?pole=business">Pôle Business</a></li>
+          <li><a href="boutique.html?pole=vie-pratique">Vie Pratique</a></li>
+        </ul>
+      </div>
+
+      <!-- Aide -->
+      <div>
+        <h3 class="footer-col-title">Aide</h3>
+        <ul class="footer-col-links">
+          <li><a href="#comment-ca-marche">Comment ça marche</a></li>
+          <li><a href="https://wa.me/22900000000" target="_blank" rel="noopener noreferrer">Support WhatsApp</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Politique de remboursement</a></li>
+        </ul>
+      </div>
+
+      <!-- Légal -->
+      <div>
+        <h3 class="footer-col-title">Légal</h3>
+        <ul class="footer-col-links">
+          <li><a href="#">Conditions d'utilisation</a></li>
+          <li><a href="#">Politique de confidentialité</a></li>
+          <li><a href="#">À propos</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="footer-divider"/>
+    <div class="footer-bottom">
+      <p class="footer-copy">&copy; 2024 XOHO – Micro-Solutions Numériques. Tous droits réservés.</p>
+      <p class="footer-copy">Fait avec ❤️ au Bénin 🇧🇯</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════ FLOATING WHATSAPP ══════════════════ -->
+<div class="wa-float" aria-label="Contact WhatsApp">
+  <div class="wa-tooltip" aria-hidden="true">Besoin d'aide ?</div>
+  <a href="https://wa.me/22900000000?text=Bonjour%20XOHO,%20j'ai%20besoin%20d'aide"
+     class="wa-btn" target="_blank" rel="noopener noreferrer"
+     aria-label="Contacter XOHO sur WhatsApp">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+</div>
+
+<!-- Toast container -->
+<div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="false"></div>
+
+<!-- Scripts -->
+<script type="module" src="js/app.js"></script>
+<script>
+  // Particles
+  (function(){
+    const c = document.getElementById('particles');
+    if(!c) return;
+    for(let i=0;i<18;i++){
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const s = Math.random()*80+20;
+      p.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${Math.random()*4+4}s;--delay:${Math.random()*3}s`;
+      c.appendChild(p);
+    }
+  })();
+
+  // Scroll-reveal via IntersectionObserver
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // Navbar scroll class
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll',()=>{ nav.classList.toggle('scrolled', window.scrollY>40); }, {passive:true});
+
+  // Scroll progress
+  const bar = document.getElementById('scroll-progress');
+  window.addEventListener('scroll',()=>{
+    const pct = window.scrollY/(document.body.scrollHeight-window.innerHeight)*100;
+    bar.style.width = pct+'%';
+  },{passive:true});
+
+  // Hamburger
+  const btn = document.getElementById('hamburgerBtn');
+  const drawer = document.getElementById('navDrawer');
+  btn.addEventListener('click',()=>{
+    const open = drawer.classList.toggle('open');
+    btn.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', open);
+    document.body.style.overflow = open?'hidden':'';
+  });
+  drawer.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+    drawer.classList.remove('open'); btn.classList.remove('open');
+    btn.setAttribute('aria-expanded','false'); document.body.style.overflow='';
+  }));
+
+  // Show desktop boutique button when scrolled
+  const desktopBtn = document.querySelector('.nav-actions .btn-sm');
+  if(desktopBtn){
+    window.addEventListener('scroll',()=>{
+      desktopBtn.style.display = window.scrollY>200?'inline-flex':'none';
+    },{passive:true});
+  }
+</script>
+</body>
+</html>

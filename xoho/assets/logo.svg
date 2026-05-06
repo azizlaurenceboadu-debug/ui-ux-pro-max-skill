@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 220" fill="none" role="img" aria-label="XOHO logo">
+  <defs>
+    <mask id="arrowMask">
+      <rect width="300" height="220" fill="white"/>
+      <rect x="139" y="15" width="22" height="185" fill="black"/>
+    </mask>
+  </defs>
+  <!-- Left outer circle -->
+  <circle cx="95" cy="108" r="72" stroke="#1A2B6B" stroke-width="12" mask="url(#arrowMask)"/>
+  <!-- Left inner circle -->
+  <circle cx="95" cy="108" r="50" stroke="#1A2B6B" stroke-width="6" mask="url(#arrowMask)"/>
+  <!-- Right outer circle -->
+  <circle cx="205" cy="108" r="72" stroke="#1A2B6B" stroke-width="12" mask="url(#arrowMask)"/>
+  <!-- Right inner circle -->
+  <circle cx="205" cy="108" r="50" stroke="#1A2B6B" stroke-width="6" mask="url(#arrowMask)"/>
+  <!-- Arrow shaft -->
+  <line x1="150" y1="190" x2="150" y2="30" stroke="#1A2B6B" stroke-width="12" stroke-linecap="round"/>
+  <!-- Arrow head -->
+  <path d="M133 56L150 20L167 56" fill="#1A2B6B" stroke="#1A2B6B" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>
