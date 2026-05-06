@@ -57,7 +57,7 @@ xoho/
 
 ### 3. WhatsApp
 
-Remplacer `22992069709` par votre vrai numéro WhatsApp dans tous les fichiers HTML.
+Remplacer `2290192069709` par votre vrai numéro WhatsApp dans tous les fichiers HTML.
 
 ### 4. Logo
 
