@@ -6,7 +6,7 @@ Plateforme e-commerce mobile-first pour la vente de documents professionnels au 
 
 - **Frontend** : HTML5, CSS3 (design system custom), JavaScript ES Modules
 - **Backend** : Firebase (Firestore, Auth, Storage, Hosting)
-- **Paiement** : Kkiapay (MoMo/Flooz)
+- **Paiement** : Kkiapay (Moov Money/MoMo)
 - **Design** : Space Grotesk + Inter, Navy #1A2B6B, animations CSS
 
 ## Structure des fichiers
@@ -57,7 +57,7 @@ xoho/
 
 ### 3. WhatsApp
 
-Remplacer `22900000000` par votre vrai numéro WhatsApp dans tous les fichiers HTML.
+Remplacer `22992069709` par votre vrai numéro WhatsApp dans tous les fichiers HTML.
 
 ### 4. Logo
 

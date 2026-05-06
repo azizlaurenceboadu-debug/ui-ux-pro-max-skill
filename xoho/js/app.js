@@ -4,8 +4,8 @@ import { supabase, storageUrl } from './supabase-config.js'
 export const POLES = {
   administratif:  { label: 'Pôle Administratif', color: '#4F46E5', bg: '#EEF2FF', tagClass: 'tag-admin'    },
   academique:     { label: 'Pôle Académique',    color: '#16A34A', bg: '#F0FDF4', tagClass: 'tag-academic' },
-  citoyen:        { label: 'Pôle Citoyen',       color: '#EA580C', bg: '#FFF7ED', tagClass: 'tag-citizen'  },
-  business:       { label: 'Pôle Business',      color: '#D97706', bg: '#FFFBEB', tagClass: 'tag-business' },
+  citoyen:        { label: 'Pôle Citoyen',       color: '#0891B2', bg: '#ECFEFF', tagClass: 'tag-citizen'  },
+  business:       { label: 'Pôle Business',      color: '#7C3AED', bg: '#F5F3FF', tagClass: 'tag-business' },
   'vie-pratique': { label: 'Vie Pratique',        color: '#0284C7', bg: '#F0F9FF', tagClass: 'tag-practical'},
 }
 
