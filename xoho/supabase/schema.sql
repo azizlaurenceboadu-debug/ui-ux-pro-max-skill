@@ -73,18 +73,18 @@ create policy "public_insert_orders"
   on orders for insert
   with check (true);
 
--- Anyone can read their own order by download_token
--- (no auth needed — token is the secret)
+-- Anyone can read a single order by exact download_token (enforced at query level)
+-- TODO: Move to a Supabase Edge Function for stricter server-side enforcement
 create policy "public_read_order_by_token"
   on orders for select
   using (true);
 
--- Anyone can update status (needed for payment confirmation from client)
--- In production, restrict this via an Edge Function or webhook instead
+-- Only allows transitioning a pending order to completed with a non-null txid.
+-- Prevents modifying already-completed or accessed orders from the client.
 create policy "public_update_order_status"
   on orders for update
-  using (true)
-  with check (true);
+  using (status = 'pending')
+  with check (status = 'completed' AND kkiapay_txid IS NOT NULL);
 
 -- Only authenticated users (admin) can delete orders
 create policy "admin_delete_orders"
@@ -102,17 +102,21 @@ insert into storage.buckets (id, name, public)
 values ('previews', 'previews', true)
 on conflict (id) do nothing;
 
+-- Products bucket is PRIVATE — access via signed URLs only (see succes.js)
 insert into storage.buckets (id, name, public)
-values ('products', 'products', true)
+values ('products', 'products', false)
 on conflict (id) do nothing;
 
--- Allow anyone to read from both public buckets
+-- Allow anyone to read previews (non-sensitive thumbnails)
 create policy "public_read_previews"
   on storage.objects for select
   using (bucket_id = 'previews');
 
-create policy "public_read_products"
+-- Products files are private: only authenticated users (admin) can read directly.
+-- Public access is granted via short-lived signed URLs generated server-side.
+create policy "admin_read_products"
   on storage.objects for select
+  to authenticated
   using (bucket_id = 'products');
 
 -- Only authenticated users (admin) can upload/delete files

@@ -1,10 +1,9 @@
 // ─── Success / Download page logic ───────────────────────────────────────
-import { supabase, storageUrl } from './supabase-config.js'
+import { supabase } from './supabase-config.js'
 
 async function init() {
   const params   = new URLSearchParams(window.location.search)
   const token    = params.get('token')
-  const testMode = params.get('status') === 'test'
 
   const loadEl    = document.getElementById('loadingState')
   const successEl = document.getElementById('successState')
@@ -14,14 +13,6 @@ async function init() {
     show(errorEl, loadEl)
     document.getElementById('errorMsg').textContent = 'Lien invalide. Contactez le support.'
     return
-  }
-
-  // En mode test, confirmer la commande automatiquement
-  if (testMode) {
-    await supabase
-      .from('orders')
-      .update({ status: 'completed', kkiapay_txid: 'TEST_' + Date.now() })
-      .eq('download_token', token)
   }
 
   try {
@@ -60,13 +51,19 @@ async function init() {
     document.getElementById('productNameDisplay').textContent = order.product_name || '—'
     document.getElementById('emailDisplay').textContent       = order.buyer_email  || '—'
 
-    // URL de téléchargement depuis Supabase Storage
+    // URL de téléchargement signée (expire dans 1 heure)
     const filePath = order.products?.file_path
     const dlBtn    = document.getElementById('downloadBtn')
     if (filePath) {
-      const fileUrl = storageUrl('products', filePath)
-      dlBtn.href = fileUrl
-      dlBtn.setAttribute('download', '')
+      const { data: signedData, error: signErr } = await supabase.storage
+        .from('products')
+        .createSignedUrl(filePath, 3600)
+      if (!signErr && signedData?.signedUrl) {
+        dlBtn.href = signedData.signedUrl
+        dlBtn.setAttribute('download', '')
+      } else {
+        dlBtn.style.display = 'none'
+      }
     } else {
       dlBtn.style.display = 'none'
       const msgEl = document.getElementById('successMsg')

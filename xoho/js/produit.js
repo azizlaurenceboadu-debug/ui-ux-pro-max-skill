@@ -59,16 +59,30 @@ function renderProduct(product) {
   const bullets   = (product.bullets || '').split('\n').filter(b => b.trim())
   const bulletsEl = document.getElementById('pdBullets')
   if (bulletsEl) {
-    bulletsEl.innerHTML = bullets.map(b => `
-      <li>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        ${b.trim()}
-      </li>`).join('')
+    bulletsEl.innerHTML = ''
+    bullets.forEach(b => {
+      const li  = document.createElement('li')
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+      svg.setAttribute('width', '18'); svg.setAttribute('height', '18')
+      svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('fill', 'none')
+      svg.setAttribute('stroke', 'currentColor'); svg.setAttribute('stroke-width', '2.5')
+      const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline')
+      poly.setAttribute('points', '20 6 9 17 4 12')
+      svg.appendChild(poly)
+      li.appendChild(svg)
+      li.appendChild(document.createTextNode(' ' + b.trim()))
+      bulletsEl.appendChild(li)
+    })
   }
 
   const fullDescEl = document.getElementById('pdFullDesc')
   if (fullDescEl) {
-    fullDescEl.innerHTML = (product.full_desc || product.short_desc || '').replace(/\n/g, '<br>')
+    fullDescEl.innerHTML = ''
+    const text = product.full_desc || product.short_desc || ''
+    text.split('\n').forEach((line, i) => {
+      if (i > 0) fullDescEl.appendChild(document.createElement('br'))
+      fullDescEl.appendChild(document.createTextNode(line))
+    })
   }
 
   const fileInfoEl = document.getElementById('pdFileInfo')
@@ -79,11 +93,19 @@ function renderProduct(product) {
       { label: 'Pôle',      value: info.label                      },
       { label: 'Livraison', value: 'Instantanée'                   },
     ]
-    fileInfoEl.innerHTML = infos.map(i => `
-      <div>
-        <div style="font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem">${i.label}</div>
-        <div style="font-weight:600;color:var(--navy)">${i.value}</div>
-      </div>`).join('')
+    fileInfoEl.innerHTML = ''
+    infos.forEach(({ label, value }) => {
+      const wrap     = document.createElement('div')
+      const labelDiv = document.createElement('div')
+      labelDiv.style.cssText = 'font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem'
+      labelDiv.textContent = label
+      const valueDiv = document.createElement('div')
+      valueDiv.style.cssText = 'font-weight:600;color:var(--navy)'
+      valueDiv.textContent = value
+      wrap.appendChild(labelDiv)
+      wrap.appendChild(valueDiv)
+      fileInfoEl.appendChild(wrap)
+    })
   }
 
   const io = new IntersectionObserver((entries) => {
@@ -156,10 +178,12 @@ async function handleBuySubmit(e) {
 
     // Ouvrir Kkiapay
     if (typeof openKkiapayWidget === 'function') {
+      const isProduction = window.location.hostname !== 'localhost' &&
+                           !window.location.hostname.startsWith('127.')
       openKkiapayWidget({
         amount:   currentProduct.price,
         api_key:  'VOTRE_CLE_PUBLIQUE_KKIAPAY', // ⚠️ Remplacez avec votre clé Kkiapay
-        sandbox:  true,                           // Passez à false en production
+        sandbox:  !isProduction,
         phone:    phoneEl.value.trim(),
         name:     nameEl.value.trim(),
         email:    emailEl.value.trim(),
@@ -167,8 +191,7 @@ async function handleBuySubmit(e) {
         callback: `${window.location.origin}/succes.html?token=${order.download_token}`,
       })
     } else {
-      // Mode test (sans Kkiapay chargé)
-      window.location.href = `succes.html?token=${order.download_token}&status=test`
+      showToast('Le module de paiement n\'est pas chargé. Rechargez la page.', 'error')
     }
   } catch (err) {
     showToast(err.message || 'Une erreur est survenue.', 'error')
@@ -179,7 +202,9 @@ async function handleBuySubmit(e) {
 }
 
 // Callback Kkiapay après paiement réussi
+const KKIAPAY_ORIGINS = ['https://cdn.kkiapay.me', 'https://api.kkiapay.me']
 window.addEventListener('message', async (e) => {
+  if (!KKIAPAY_ORIGINS.includes(e.origin)) return
   if (e.data?.event === 'kkiapay.payment.success' && pendingToken) {
     const txid = e.data?.data?.transactionId || ''
     try {
